@@ -1,4 +1,4 @@
-package com.faridroid.english10k.dao.entity;
+package com.faridroid.english10k.entity;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
