@@ -22,5 +22,9 @@ public class WordViewModel extends AndroidViewModel {
     public LiveData<List<Word>> getWordsByLimit(int limit) {
         return repository.getWordsByLimit(limit);
     }
+
+    public LiveData<Integer> getTotalWords() {
+        return repository.getTotalWords();
+    }
 }
 

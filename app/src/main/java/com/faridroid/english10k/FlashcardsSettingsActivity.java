@@ -1,7 +1,7 @@
 package com.faridroid.english10k;
 
 import android.content.Intent;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.faridroid.english10k.data.entity.User;
-import com.faridroid.english10k.viewmodel.UserViewModel;
+import com.faridroid.english10k.viewmodel.FlashcardsSettingsViewModel;
+import com.faridroid.english10k.viewmodel.WordViewModel;
 import com.faridroid.english10k.viewmodel.dto.UserDTO;
+import com.faridroid.english10k.viewmodel.factory.FlashcardsSettingsViewModelFactory;
 
 public class FlashcardsSettingsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -26,11 +27,12 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     Spinner rangeSpinner;
     SeekBar wordCountSeekBar;
     TextView wordCountText;
-    Button startFlashcardsButton;
+    Button btnStartGame;
     Button incrementButton;
     Button decrementButton;
-    private UserViewModel userViewModel;
     private Button btnGoHome;
+
+    private FlashcardsSettingsViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,33 +43,45 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
         wordCountText = findViewById(R.id.word_count_text);
         wordCountSeekBar.setOnSeekBarChangeListener(this);
 
-        startFlashcardsButton = findViewById(R.id.start_flashcards_button);
+        btnStartGame = findViewById(R.id.start_flashcards_button);
         wordCountSeekBar.setOnSeekBarChangeListener(this);
         incrementButton = findViewById(R.id.increment_button);
         decrementButton = findViewById(R.id.decrement_button);
 
-        startFlashcardsButton.setOnClickListener(this);
+        btnStartGame.setOnClickListener(this);
         incrementButton.setOnClickListener(this);
         decrementButton.setOnClickListener(this);
-
-        userViewModel = new ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
 
         btnGoHome = findViewById(R.id.btnGoHome);
         btnGoHome.setOnClickListener(this);
         this.user = (UserDTO) getIntent().getSerializableExtra("user");
+
+        WordViewModel wordViewModel = wordViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
+
+        SharedPreferences preferences = getSharedPreferences("english10k_settings", MODE_PRIVATE);
+
+
+        // Crear la instancia del ViewModelFactory
+        FlashcardsSettingsViewModelFactory factory = new FlashcardsSettingsViewModelFactory(getApplication(), wordViewModel, preferences, user);
+        // Instanciar el ViewModel usando el Factory
+        viewModel = new ViewModelProvider(this, factory).get(FlashcardsSettingsViewModel.class);
+
         setRange();
     }
 
     private void setRange() {
 
-        this.minWords = 5;
-        //todo: change the  10000 to the total amount of words in db
-        this.maxWords = Math.min(10000,user.getXp() + 100);
-
-        wordCountSeekBar.setMax((int) maxWords);
-        wordCountSeekBar.setMin(minWords);
-        wordCountSeekBar.setProgress((int) ((maxWords)/2));
+        viewModel.getRange().observe(this, seekBarRange -> {
+            if (seekBarRange != null) {
+                minWords = seekBarRange.getMin();
+                maxWords = seekBarRange.getMax();
+                wordCountSeekBar.setMax((int) maxWords);
+                wordCountSeekBar.setMin(minWords);
+                wordCountSeekBar.setProgress(seekBarRange.getProgress());
+                wordCountText.setText(seekBarRange.getProgress() + " Palabras");
+            }
+        });
     }
 
     @Override
@@ -91,10 +105,6 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     public void onClick(View view) {
         int currentValue = wordCountSeekBar.getProgress();
 
-
-        final Integer incrementButton1 = R.id.increment_button;
-
-
         if (view.getId() == R.id.increment_button) {
             int incrementValue = getIncrementValueBasedOnMax(currentValue + minWords);
             if (currentValue + incrementValue <= wordCountSeekBar.getMax()) {
@@ -115,7 +125,11 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             intent.putExtra("user", this.user);
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
+
+            viewModel.setRange(wordsToPlay);
+
             startActivity(intent);
+
         }else if (view.getId() == R.id.btnGoHome){
             Intent intent = new Intent(FlashcardsSettingsActivity.this, MainActivity.class);
             startActivity(intent);
