@@ -5,7 +5,6 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import com.faridroid.english10k.FlashcardGameActivity;
 
@@ -60,12 +59,11 @@ public class SwipeGestureListener extends SimpleOnGestureListener {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
                 // Animación de entrada
                 Animation slideInLeft = AnimationUtils.loadAnimation(flashcardGameActivity, flashcardGameActivity.getResources().getIdentifier("slide_in_left", "anim", flashcardGameActivity.getPackageName()));
                 viewToAnimate.startAnimation(slideInLeft);
                 // Cambiar la palabra después de la animación de salida
-                flashcardGameActivity.onSwipeRight();
+                flashcardGameActivity.onSwipeRightPreviousWord();
             }
 
             @Override
@@ -75,6 +73,9 @@ public class SwipeGestureListener extends SimpleOnGestureListener {
     }
 
     public void onSwipeLeft() {
+        if (!flashcardGameActivity.getGameManager().hasNextWord()){
+            return;
+        }
         // Animación de salida
         Animation slideOutLeft = AnimationUtils.loadAnimation(flashcardGameActivity, flashcardGameActivity.getResources().getIdentifier("slide_out_left", "anim", flashcardGameActivity.getPackageName()));
 
@@ -91,7 +92,7 @@ public class SwipeGestureListener extends SimpleOnGestureListener {
                 viewToAnimate.startAnimation(slideInRight);
 
                 // Cambiar la palabra después de la animación de salida
-                flashcardGameActivity.onSwipeLeft();
+                flashcardGameActivity.onSwipeLeftNextWord();
             }
 
             @Override

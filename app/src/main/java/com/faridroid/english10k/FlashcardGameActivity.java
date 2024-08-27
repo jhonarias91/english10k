@@ -24,32 +24,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.faridroid.english10k.data.entity.Word;
+import com.faridroid.english10k.game.FlashcardGameManager;
 import com.faridroid.english10k.utils.SwipeGestureListener;
 import com.faridroid.english10k.viewmodel.UserViewModel;
 import com.faridroid.english10k.viewmodel.WordViewModel;
 import com.faridroid.english10k.viewmodel.dto.UserDTO;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class FlashcardGameActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnDragListener, SensorEventListener {
 
+    private FlashcardGameManager gameManager;
 
     private int maxWords;
     private int wordsToPlay;
     private UserDTO user;
     private WordViewModel wordViewModel;
-    private List<Word> allPosibleWords;
-    private List<Word> levelWords;
     private View flashcardView;
     private FrameLayout frameCardLayoutContainer;
-    private int currentCardPosition = 0;
-    private int score = 0;
-    //To save the position of the flipped cards
-    private Set<Integer> flippedCardPositions = new HashSet<>();
 
     private TextView textViewFront, textViewBack;
     private GestureDetector gestureDetector;
@@ -67,9 +57,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     private boolean isShakeDetected = false; // Para evitar múltiples llamadas
     private final long SHAKE_RESET_TIME = 500; // Tiempo en milisegundos para resetear la detección
     private SwipeGestureListener swipeGestureListener;
-
-    //To solve issue with the swipe over the text
-    private HashMap<Integer, Boolean> cardVisibilityStates;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,7 +76,8 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
 
         wordViewModel.getWordsByLimit(this.maxWords).observe(this, words -> {
-            this.allPosibleWords = words;
+            //this.allPosibleWords = words;
+            gameManager = new FlashcardGameManager(maxWords, wordsToPlay, words);
             startGame();
         });
 
@@ -119,21 +107,14 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     }
 
     private void startGame() {
-        //Logic for flashCard
         isOnPause = false;
         frameCardLayoutContainer = findViewById(R.id.flashcardContainer);
         flashcardView = getLayoutInflater().inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
         frameCardLayoutContainer.addView(flashcardView);
-        Collections.shuffle(allPosibleWords);
-        cardVisibilityStates = new HashMap<>();
-
-        showFlashcard(allPosibleWords.get(currentCardPosition));
-
-
+        showFlashcard(gameManager.getCurrentWord());
     }
 
     private void showFlashcard(Word word) {
-        frameCardLayoutContainer = findViewById(R.id.flashcardContainer);
         frameCardLayoutContainer.removeAllViews();
         View cardView = LayoutInflater.from(this).inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
 
@@ -145,6 +126,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
         textViewFront.setOnClickListener(this::flipCard);
         textViewBack.setOnClickListener(this::flipCard);
+
         textViewFront.setOnTouchListener((view, motionEvent) -> {
             gestureDetector.onTouchEvent(motionEvent);
             //Return false to allow the event to continue to any other listeners
@@ -158,15 +140,15 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         });
 
         // Establecer el estado de visibilidad basado en el historial
-        Boolean isFrontVisible = cardVisibilityStates.getOrDefault(currentCardPosition, true);
-        if (!isFrontVisible) {
-            textViewFront.setVisibility(View.GONE);
-            textViewBack.setVisibility(View.VISIBLE);
-        } else {
+        Boolean isFrontVisible = gameManager.isFrontVisible();
+
+        if (isFrontVisible) {
             textViewFront.setVisibility(View.VISIBLE);
             textViewBack.setVisibility(View.GONE);
+        } else {
+            textViewFront.setVisibility(View.GONE);
+            textViewBack.setVisibility(View.VISIBLE);
         }
-
         frameCardLayoutContainer.addView(cardView);
     }
 
@@ -177,8 +159,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         if (isOnPause) {
             return;
         }
-        boolean isFrontVisible = cardVisibilityStates.getOrDefault(currentCardPosition, true);
-
+        boolean isFrontVisible = gameManager.isFrontVisible();
         if (isFrontVisible) {
             textViewFront.animate().rotationY(90).setDuration(200).withEndAction(() -> {
                 textViewFront.setVisibility(View.GONE);
@@ -186,13 +167,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 textViewBack.setRotationY(-90);
                 textViewBack.animate().rotationY(0).setDuration(200);
             });
-            // Verifica si la palabra en la posición actual ya ha sido volteada
-            if (!flippedCardPositions.contains(currentCardPosition)) {
-                flippedCardPositions.add(currentCardPosition); // Marca la posición como volteada
-                score++; // Incrementa el puntaje
-            }
-            // Actualizar el mapa
-            cardVisibilityStates.put(currentCardPosition, false);
         } else {
             textViewBack.animate().rotationY(90).setDuration(200).withEndAction(() -> {
                 textViewBack.setVisibility(View.GONE);
@@ -200,21 +174,19 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 textViewFront.setRotationY(-90);
                 textViewFront.animate().rotationY(0).setDuration(200);
             });
-            // Actualizar el mapa
-            cardVisibilityStates.put(currentCardPosition, true);
         }
+        gameManager.flipCard();
     }
 
     @Override
     public void onClick(View view) {
-
         if (isOnPause) {
             return;
         }
         if (view.getId() == R.id.left_arrow_flashcard_id) {
-            onSwipeRight();
+            swipeGestureListener.onSwipeRight();
         } else if (view.getId() == R.id.right_arrow_flashcard_id) {
-            onSwipeLeft();
+            swipeGestureListener.onSwipeLeft();
         }
     }
 
@@ -229,25 +201,23 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     }
 
     //Show left word
-    public void onSwipeRight() {
+    public void onSwipeRightPreviousWord() {
         if (isOnPause) {
             return;
         }
-        if (currentCardPosition > 0) {
-            currentCardPosition--;
-            showFlashcard(allPosibleWords.get(currentCardPosition));
-        }
+        gameManager.previousWord();
+        showFlashcard(gameManager.getCurrentWord());
     }
 
     //Show right word
-    public void onSwipeLeft() {
+    public void onSwipeLeftNextWord() {
         if (isOnPause) {
             return;
         }
-        if (currentCardPosition < wordsToPlay - 1) {
-            currentCardPosition++;
-            showFlashcard(allPosibleWords.get(currentCardPosition));
-        } else if (currentCardPosition == wordsToPlay - 1) {
+        gameManager.nextWord();
+        if (gameManager.hasNextWord()) {
+            showFlashcard(gameManager.getCurrentWord());
+        } else {
             showEndGameDialog();
         }
     }
@@ -258,20 +228,37 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         }
         this.isOnPause = true;
 
-        // Crear el AlertDialog
+        // create end game dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Juego Terminado");
-        builder.setMessage("Tu puntaje es: " + this.score );
+        builder.setMessage("Tu puntaje es: " + gameManager.getScore() );
 
         // Botón para volver a jugar
         builder.setPositiveButton("Volver a jugar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (score > 0) {
-                    userViewModel.updateXp(user.getId(), user.getXp() + score);
-                    user.setXp(user.getXp() + score);
+                if (gameManager.getScore() > 0) {
+                    userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore());
+                    user.setXp(user.getXp() + gameManager.getScore());
                 }
-                resetGame();
+
+
+                // Animación de Fade Out
+                View rootView = findViewById(android.R.id.content);
+                rootView.animate().alpha(0f).setDuration(200).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+                        // Animación de Fade In
+                        rootView.animate().alpha(1f).setDuration(300).start();
+                        gameManager.resetGame();
+                        isOnPause = false;
+                        showFlashcard(gameManager.getCurrentWord());
+                    }
+                }).start();
+
+
             }
         });
 
@@ -279,10 +266,9 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         builder.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (score > 0) {
-                    userViewModel.updateXp(user.getId(), user.getXp() + score);
+                if (gameManager.getScore() > 0) {
+                    userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore());
                 }
-
                 // Ir a la actividad de configuraciones
                 Intent intent = new Intent(FlashcardGameActivity.this, FlashcardsSettingsActivity.class);
                 intent.putExtra("user", user);
@@ -291,19 +277,9 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             }
         });
 
-        // Mostrar el dialogo
+        // Show dialogo
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    public void resetGame() {
-        currentCardPosition = 0;
-        score = 0;
-        startGame();
-        isOnPause = false;
-        flippedCardPositions.clear();
-        cardVisibilityStates.clear();
-
     }
 
     @Override
@@ -336,7 +312,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // No se necesita implementar nada aquí para este caso
     }
 
     @Override
@@ -352,5 +327,10 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         isOnPause = false;
     }
+
+    public FlashcardGameManager getGameManager() {
+        return gameManager;
+    }
+
 }
 
