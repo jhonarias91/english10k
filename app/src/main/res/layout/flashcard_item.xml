@@ -6,34 +6,41 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     app:cardCornerRadius="8dp"
+    android:layout_marginTop="32sp"
+    android:paddingBottom="32sp"
     android:layout_gravity="center"
     android:id="@+id/flashcardCardView">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/frameFlashcardIntern">
+        android:layout_height="match_parent"
+        android:id="@+id/frameFlashcardIntern"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/textViewFront"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:padding="16dp"
+            android:padding="32dp"
             android:textSize="32sp"
             android:visibility="visible"
-            tools:text="Hello" />
+            tools:text="Hello" >
+
+        </TextView>
 
         <TextView
             android:id="@+id/textViewBack"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:layout_height="match_parent"
+            android:padding="32sp"
             android:gravity="center"
             android:textSize="32sp"
             android:visibility="gone"

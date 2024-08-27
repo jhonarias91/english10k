@@ -1,14 +1,21 @@
 package com.faridroid.english10k;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -23,9 +30,11 @@ import com.faridroid.english10k.viewmodel.WordViewModel;
 import com.faridroid.english10k.viewmodel.dto.UserDTO;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class FlashcardGameActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnDragListener {
+public class FlashcardGameActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnDragListener, SensorEventListener {
 
 
     private int maxWords;
@@ -38,13 +47,27 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     private FrameLayout frameCardLayoutContainer;
     private int currentCardPosition = 0;
     private int score = 0;
+    //To save the position of the flipped cards
+    private Set<Integer> flippedCardPositions = new HashSet<>();
+
     private TextView textViewFront, textViewBack;
     private boolean isFrontVisible = true;
 
     private GestureDetector gestureDetector;
     private View viewToAnimateOnSwipe;
     private UserViewModel userViewModel;
+    private LinearLayout leftArrowFlashcard, rightArrowFlashcard;
 
+    //Check movement
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private float acelVal;  // Valor actual del acelerómetro
+    private float acelLast; // Valor previo del acelerómetro
+    private float shake;    // Diferencia para detectar un sacudido
+    private boolean isOnPause ;
+    private boolean isShakeDetected = false; // Para evitar múltiples llamadas
+    private final long SHAKE_RESET_TIME = 500; // Tiempo en milisegundos para resetear la detección
+    private SwipeGestureListener swipeGestureListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +77,10 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         this.user = (UserDTO) getIntent().getSerializableExtra("user");
         this.maxWords = getIntent().getIntExtra("maxWords", 100);
         this.wordsToPlay = getIntent().getIntExtra("wordsToPlay", 5);
+        leftArrowFlashcard = findViewById(R.id.left_arrow_flashcard_id);
+        leftArrowFlashcard.setOnClickListener(this);
+        rightArrowFlashcard = findViewById(R.id.right_arrow_flashcard_id);
+        rightArrowFlashcard.setOnClickListener(this);
 
         viewToAnimateOnSwipe = findViewById(R.id.flashcardContainer);
         wordViewModel = new ViewModelProvider(this,
@@ -65,8 +92,12 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         });
 
         gestureDetector = new GestureDetector(this, new SwipeGestureListener(this, viewToAnimateOnSwipe));
+        //To animate when gyroscope is detected
+        swipeGestureListener = new SwipeGestureListener(this, viewToAnimateOnSwipe);
+
         // Configura el OnTouchListener en la vista raíz
         View rootView = findViewById(R.id.root_flashcard_game_id);
+
         rootView.setOnTouchListener((view, motionEvent) -> {
             gestureDetector.onTouchEvent(motionEvent);
             return true;
@@ -76,10 +107,19 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
 
+        //Sensor
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        acelVal = SensorManager.GRAVITY_EARTH;
+        acelLast = SensorManager.GRAVITY_EARTH;
+        shake = 0.00f;
     }
 
     private void startGame() {
         //Logic for flashCard
+        isOnPause = false;
         frameCardLayoutContainer = findViewById(R.id.flashcardContainer);
         flashcardView = getLayoutInflater().inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
         frameCardLayoutContainer.addView(flashcardView);
@@ -104,7 +144,13 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         frameCardLayoutContainer.addView(cardView);
     }
 
+    /*
+    * Check the card to flip it english-spanish or spanish-english
+    * */
     private void flipCard(View view) {
+        if (isOnPause) {
+            return;
+        }
         if (isFrontVisible) {
             textViewFront.animate().rotationY(90).setDuration(200).withEndAction(() -> {
                 textViewFront.setVisibility(View.GONE);
@@ -112,6 +158,11 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 textViewBack.setRotationY(-90);
                 textViewBack.animate().rotationY(0).setDuration(200);
             });
+            // Verifica si la palabra en la posición actual ya ha sido volteada
+            if (!flippedCardPositions.contains(currentCardPosition)) {
+                flippedCardPositions.add(currentCardPosition); // Marca la posición como volteada
+                score++; // Incrementa el puntaje
+            }
         } else {
             textViewBack.animate().rotationY(90).setDuration(200).withEndAction(() -> {
                 textViewBack.setVisibility(View.GONE);
@@ -119,6 +170,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 textViewFront.setRotationY(-90);
                 textViewFront.animate().rotationY(0).setDuration(200);
             });
+
         }
         isFrontVisible = !isFrontVisible;
     }
@@ -126,11 +178,14 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View view) {
 
-     /*   if (view.getId() == R.id.txtFlashcardWord){
-            // Mostrar la traducción de la palabra
-            TextView txtFlashcardWord = findViewById(R.id.txtFlashcardWord);
-            txtFlashcardWord.setText(allPosibleWords.get(currentCardPosition).getSpanish());
-        }*/
+        if (isOnPause) {
+            return;
+        }
+        if (view.getId() == R.id.left_arrow_flashcard_id) {
+            onSwipeRight();
+        } else if (view.getId() == R.id.right_arrow_flashcard_id) {
+            onSwipeLeft();
+        }
     }
 
     @Override
@@ -146,28 +201,33 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
     //Show left word
     public void onSwipeRight() {
+        if (isOnPause) {
+            return;
+        }
         if (currentCardPosition > 0) {
             currentCardPosition--;
             showFlashcard(allPosibleWords.get(currentCardPosition));
-            score--;
         }
     }
 
     //Show right word
     public void onSwipeLeft() {
+        if (isOnPause) {
+            return;
+        }
         if (currentCardPosition < wordsToPlay - 1) {
             currentCardPosition++;
             showFlashcard(allPosibleWords.get(currentCardPosition));
-            score++;
         } else if (currentCardPosition == wordsToPlay - 1) {
-            score++;
             showEndGameDialog();
         }
     }
 
     private void showEndGameDialog() {
-
-        this.user.setXp(this.user.getXp() + this.score);
+        if (isOnPause) {
+            return;
+        }
+        this.isOnPause = true;
 
         // Crear el AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -178,6 +238,9 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         builder.setPositiveButton("Volver a jugar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (score > 0) {
+                    userViewModel.updateXp(user.getId(), user.getXp() + score);
+                }
                 resetGame();
             }
         });
@@ -186,8 +249,10 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         builder.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (score > 0) {
+                    userViewModel.updateXp(user.getId(), user.getXp() + score);
+                }
 
-                userViewModel.updateXp(user.getId(), user.getXp());
                 // Ir a la actividad de configuraciones
                 Intent intent = new Intent(FlashcardGameActivity.this, FlashcardsSettingsActivity.class);
                 intent.putExtra("user", user);
@@ -205,6 +270,54 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         currentCardPosition = 0;
         score = 0;
         startGame();
+        isOnPause = false;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (isOnPause) {
+            return;
+        }
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
+
+        acelLast = acelVal;
+        acelVal = (float) Math.sqrt((double) (x * x + y * y + z * z));
+        float delta = acelVal - acelLast;
+        shake = shake * 0.9f + delta; // Se aplica un filtro para suavizar la señal
+
+
+        // Aquí se comprueba la dirección del movimiento
+        if (shake > 12 && !isShakeDetected) { // El umbral de detección puede ajustarse
+            if (x > 1) {
+                swipeGestureListener.onSwipeRight();
+            } else if (x < -1) {
+                swipeGestureListener.onSwipeLeft();
+            }
+            isShakeDetected = true;
+            // Restablecer el flag después de un tiempo para permitir futuras detecciones
+            new Handler().postDelayed(() -> isShakeDetected = false, SHAKE_RESET_TIME);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // No se necesita implementar nada aquí para este caso
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+        isOnPause = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        isOnPause = false;
     }
 }
 

@@ -18,6 +18,7 @@
         android:elevation="4dp"
         android:gravity="center"
         android:paddingVertical="8dp"
+        android:padding="16sp"
         android:layout_marginBottom="8dp">
 
         <TextView
@@ -30,15 +31,46 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layoutParentCardId"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/left_arrow_flashcard_id"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@drawable/next"
+            android:rotation="180"
+            android:orientation="horizontal"
+            />
+
     <!-- Contenedor de la tarjeta -->
     <FrameLayout
         android:id="@+id/flashcardContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:layout_marginHorizontal="50sp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"/>
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
+        android:layout_marginHorizontal="2sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center" />
+
+        <LinearLayout
+            android:id="@+id/right_arrow_flashcard_id"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@drawable/next"
+            android:gravity="center"
+            />
+    </LinearLayout>
 
     <!-- Sección "Learnd" -->
     <LinearLayout
@@ -48,6 +80,7 @@
         android:layout_weight="2"
         android:background="@drawable/learned_box_background"
         android:elevation="4dp"
+        android:padding="16sp"
         android:gravity="center"
         android:paddingVertical="8dp">
 
