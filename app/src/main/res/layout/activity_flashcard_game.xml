@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".FlashcardGameActivity"
+    android:id="@+id/root_flashcard_game_id">
+
+    <!-- Sección "To Learn" -->
+    <LinearLayout
+        android:id="@+id/toLearnContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="@drawable/learn_box_background"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:paddingVertical="8dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/toLearnTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aprender"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Contenedor de la tarjeta -->
+    <FrameLayout
+        android:id="@+id/flashcardContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_marginHorizontal="50sp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"/>
+
+    <!-- Sección "Learnd" -->
+    <LinearLayout
+        android:id="@+id/aprendidaContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="@drawable/learned_box_background"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:id="@+id/aprendidaTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aprendida"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

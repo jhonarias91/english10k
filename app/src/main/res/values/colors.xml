@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="seekbar_thumb_color">#FF6200EE</color> <!-- Color para el thumb -->
+    <color name="seekbar_start">#FF6200EE</color> <!-- Color de inicio del gradient de la barra -->
+    <color name="seekbar_end">#FF3700B3</color> <!-- Color de fin del gradient de la barra -->
+    <color name="green_background">#4CAF50</color> <!-- Green for learn box -->
+    <color name="yellow_background">#FFF59D</color> <!-- Green for learned box -->
 </resources>
