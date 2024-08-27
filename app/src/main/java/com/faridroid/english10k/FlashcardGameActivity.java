@@ -30,6 +30,7 @@ import com.faridroid.english10k.viewmodel.WordViewModel;
 import com.faridroid.english10k.viewmodel.dto.UserDTO;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,8 +52,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     private Set<Integer> flippedCardPositions = new HashSet<>();
 
     private TextView textViewFront, textViewBack;
-    private boolean isFrontVisible = true;
-
     private GestureDetector gestureDetector;
     private View viewToAnimateOnSwipe;
     private UserViewModel userViewModel;
@@ -68,6 +67,9 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     private boolean isShakeDetected = false; // Para evitar múltiples llamadas
     private final long SHAKE_RESET_TIME = 500; // Tiempo en milisegundos para resetear la detección
     private SwipeGestureListener swipeGestureListener;
+
+    //To solve issue with the swipe over the text
+    private HashMap<Integer, Boolean> cardVisibilityStates;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,7 +105,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             return true;
         });
 
-
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
 
@@ -124,7 +125,11 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         flashcardView = getLayoutInflater().inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
         frameCardLayoutContainer.addView(flashcardView);
         Collections.shuffle(allPosibleWords);
+        cardVisibilityStates = new HashMap<>();
+
         showFlashcard(allPosibleWords.get(currentCardPosition));
+
+
     }
 
     private void showFlashcard(Word word) {
@@ -140,6 +145,27 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
         textViewFront.setOnClickListener(this::flipCard);
         textViewBack.setOnClickListener(this::flipCard);
+        textViewFront.setOnTouchListener((view, motionEvent) -> {
+            gestureDetector.onTouchEvent(motionEvent);
+            //Return false to allow the event to continue to any other listeners
+            return false;
+        });
+
+        textViewBack.setOnTouchListener((view, motionEvent) -> {
+            gestureDetector.onTouchEvent(motionEvent);
+            //Return false to allow the event to continue to any other listeners
+            return false;
+        });
+
+        // Establecer el estado de visibilidad basado en el historial
+        Boolean isFrontVisible = cardVisibilityStates.getOrDefault(currentCardPosition, true);
+        if (!isFrontVisible) {
+            textViewFront.setVisibility(View.GONE);
+            textViewBack.setVisibility(View.VISIBLE);
+        } else {
+            textViewFront.setVisibility(View.VISIBLE);
+            textViewBack.setVisibility(View.GONE);
+        }
 
         frameCardLayoutContainer.addView(cardView);
     }
@@ -151,6 +177,8 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         if (isOnPause) {
             return;
         }
+        boolean isFrontVisible = cardVisibilityStates.getOrDefault(currentCardPosition, true);
+
         if (isFrontVisible) {
             textViewFront.animate().rotationY(90).setDuration(200).withEndAction(() -> {
                 textViewFront.setVisibility(View.GONE);
@@ -163,6 +191,8 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 flippedCardPositions.add(currentCardPosition); // Marca la posición como volteada
                 score++; // Incrementa el puntaje
             }
+            // Actualizar el mapa
+            cardVisibilityStates.put(currentCardPosition, false);
         } else {
             textViewBack.animate().rotationY(90).setDuration(200).withEndAction(() -> {
                 textViewBack.setVisibility(View.GONE);
@@ -170,9 +200,9 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 textViewFront.setRotationY(-90);
                 textViewFront.animate().rotationY(0).setDuration(200);
             });
-
+            // Actualizar el mapa
+            cardVisibilityStates.put(currentCardPosition, true);
         }
-        isFrontVisible = !isFrontVisible;
     }
 
     @Override
@@ -197,7 +227,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     public boolean onTouch(View view, MotionEvent motionEvent) {
         return false;
     }
-
 
     //Show left word
     public void onSwipeRight() {
@@ -232,7 +261,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         // Crear el AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Juego Terminado");
-        builder.setMessage("Tu puntaje es: " + this.score + "\n¿Qué te gustaría hacer ahora?");
+        builder.setMessage("Tu puntaje es: " + this.score );
 
         // Botón para volver a jugar
         builder.setPositiveButton("Volver a jugar", new DialogInterface.OnClickListener() {
@@ -240,6 +269,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             public void onClick(DialogInterface dialog, int which) {
                 if (score > 0) {
                     userViewModel.updateXp(user.getId(), user.getXp() + score);
+                    user.setXp(user.getXp() + score);
                 }
                 resetGame();
             }
@@ -271,6 +301,9 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         score = 0;
         startGame();
         isOnPause = false;
+        flippedCardPositions.clear();
+        cardVisibilityStates.clear();
+
     }
 
     @Override

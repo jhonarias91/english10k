@@ -48,6 +48,7 @@ android {
         }
     }
 }
+
 configurations.implementation {
     exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 }
@@ -67,3 +68,5 @@ dependencies {
     //UI
     implementation libs.androidx.cardview
 }
+
+

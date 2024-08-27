@@ -30,6 +30,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     Button incrementButton;
     Button decrementButton;
     private UserViewModel userViewModel;
+    private Button btnGoHome;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
 
+        btnGoHome = findViewById(R.id.btnGoHome);
+        btnGoHome.setOnClickListener(this);
         this.user = (UserDTO) getIntent().getSerializableExtra("user");
         setRange();
     }
@@ -112,6 +115,9 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             intent.putExtra("user", this.user);
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
+            startActivity(intent);
+        }else if (view.getId() == R.id.btnGoHome){
+            Intent intent = new Intent(FlashcardsSettingsActivity.this, MainActivity.class);
             startActivity(intent);
         }
     }
