@@ -9,18 +9,24 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.faridroid.english10k.data.entity.Word;
@@ -29,6 +35,8 @@ import com.faridroid.english10k.utils.SwipeGestureListener;
 import com.faridroid.english10k.viewmodel.UserViewModel;
 import com.faridroid.english10k.viewmodel.WordViewModel;
 import com.faridroid.english10k.viewmodel.dto.UserDTO;
+
+import java.util.Locale;
 
 public class FlashcardGameActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnDragListener, SensorEventListener {
 
@@ -53,10 +61,13 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     private float acelVal;  // Valor actual del acelerómetro
     private float acelLast; // Valor previo del acelerómetro
     private float shake;    // Diferencia para detectar un sacudido
-    private boolean isOnPause ;
+    private boolean isOnPause;
     private boolean isShakeDetected = false; // Para evitar múltiples llamadas
-    private final long SHAKE_RESET_TIME = 500; // Tiempo en milisegundos para resetear la detección
+    private final long SHAKE_RESET_TIME = 200; // Tiempo en milisegundos para resetear la detección
     private SwipeGestureListener swipeGestureListener;
+
+    private ImageButton imgBtnFlashSpeaker;
+    private TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,14 +81,22 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         leftArrowFlashcard.setOnClickListener(this);
         rightArrowFlashcard = findViewById(R.id.right_arrow_flashcard_id);
         rightArrowFlashcard.setOnClickListener(this);
-
         viewToAnimateOnSwipe = findViewById(R.id.flashcardContainer);
         wordViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
 
-        wordViewModel.getWordsByLimit(this.maxWords).observe(this, words -> {
+        LinearLayout learnedBox = findViewById(R.id.learnedBox);
+        learnedBox.setOnClickListener(this);
+
+        // Inicializar Text-to-Speech
+        textToSpeech = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech.setLanguage(Locale.US);
+            }
+        });
+        wordViewModel.getWordsByLimit(this.maxWords, this.user.getId()).observe(this, words -> {
             //this.allPosibleWords = words;
-            gameManager = new FlashcardGameManager(maxWords, wordsToPlay, words);
+            gameManager = new FlashcardGameManager(maxWords, wordsToPlay, words, textToSpeech, this.user, getApplication());
             startGame();
         });
 
@@ -111,11 +130,20 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         frameCardLayoutContainer = findViewById(R.id.flashcardContainer);
         flashcardView = getLayoutInflater().inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
         frameCardLayoutContainer.addView(flashcardView);
-        showFlashcard(gameManager.getCurrentWord());
+        Word currentWord = gameManager.getCurrentWord();
+        if (currentWord == null){
+                showEndGameDialog(2);
+        }else{
+            showFlashcard(currentWord);
+        }
+
     }
 
+    /*
+     * Allow to flip a card and move it to the categories.
+     * */
     private void showFlashcard(Word word) {
-        frameCardLayoutContainer.removeAllViews();
+
         View cardView = LayoutInflater.from(this).inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
 
         textViewFront = cardView.findViewById(R.id.textViewFront);
@@ -129,15 +157,17 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
         textViewFront.setOnTouchListener((view, motionEvent) -> {
             gestureDetector.onTouchEvent(motionEvent);
-            //Return false to allow the event to continue to any other listeners
             return false;
         });
 
         textViewBack.setOnTouchListener((view, motionEvent) -> {
             gestureDetector.onTouchEvent(motionEvent);
-            //Return false to allow the event to continue to any other listeners
             return false;
         });
+
+        imgBtnFlashSpeaker = cardView.findViewById(R.id.imgBtnFlashSpeaker);
+        imgBtnFlashSpeaker.setOnClickListener(this);
+
 
         // Establecer el estado de visibilidad basado en el historial
         Boolean isFrontVisible = gameManager.isFrontVisible();
@@ -153,8 +183,8 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
     }
 
     /*
-    * Check the card to flip it english-spanish or spanish-english
-    * */
+     * Check the card to flip it english-spanish or spanish-english
+     * */
     private void flipCard(View view) {
         if (isOnPause) {
             return;
@@ -183,16 +213,26 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         if (isOnPause) {
             return;
         }
-        if (view.getId() == R.id.left_arrow_flashcard_id) {
+        int id = view.getId();
+
+
+        if (id == R.id.left_arrow_flashcard_id) {
             swipeGestureListener.onSwipeRight();
-        } else if (view.getId() == R.id.right_arrow_flashcard_id) {
+        } else if (id == R.id.right_arrow_flashcard_id) {
             swipeGestureListener.onSwipeLeft();
+        } else if (id == R.id.imgBtnFlashSpeaker) {
+            gameManager.speakCurrentWord();
+        } else if (id == R.id.learnedBox) {
+            gameManager.addLearnedWord();
         }
+
     }
 
     @Override
-    public boolean onDrag(View view, DragEvent dragEvent) {
+    public boolean onDrag(View v, DragEvent event) {
+
         return false;
+
     }
 
     @Override
@@ -216,22 +256,38 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         }
         gameManager.nextWord();
         if (gameManager.hasNextWord()) {
-            showFlashcard(gameManager.getCurrentWord());
+            if (gameManager.hasMoreWords()){
+                showFlashcard(gameManager.getCurrentWord());
+            }else{
+                showEndGameDialog(2);
+            }
         } else {
-            showEndGameDialog();
+            showEndGameDialog(1);
         }
     }
 
-    private void showEndGameDialog() {
+    private void showEndGameDialog(int type) {
         if (isOnPause) {
             return;
         }
         this.isOnPause = true;
 
+        String title = "";
+        String body = "";
+        switch (type){
+            case 1:
+                title = "Juego Terminado";
+                body = "Tu puntaje es: " + gameManager.getScore();
+                break;
+            case 2:
+                title = "¡Vocabulario completo!";
+                body = "Desmarca las aprendidas para volver a jugar.";
+                break;
+        }
         // create end game dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Juego Terminado");
-        builder.setMessage("Tu puntaje es: " + gameManager.getScore() );
+        builder.setTitle(title);
+        builder.setMessage(body);
 
         // Botón para volver a jugar
         builder.setPositiveButton("Volver a jugar", new DialogInterface.OnClickListener() {
@@ -248,8 +304,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 rootView.animate().alpha(0f).setDuration(200).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-
-
                         // Animación de Fade In
                         rootView.animate().alpha(1f).setDuration(300).start();
                         gameManager.resetGame();
@@ -294,11 +348,12 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         acelLast = acelVal;
         acelVal = (float) Math.sqrt((double) (x * x + y * y + z * z));
         float delta = acelVal - acelLast;
-        shake = shake * 0.9f + delta; // Se aplica un filtro para suavizar la señal
+        //lower values of shake is more sensible
+        shake = shake * 0.85f + delta; // Se aplica un filtro para suavizar la señal
 
 
-        // Aquí se comprueba la dirección del movimiento
-        if (shake > 12 && !isShakeDetected) { // El umbral de detección puede ajustarse
+        // Check the sensibility
+        if (shake > 10 && !isShakeDetected) { // El umbral de detección puede ajustarse
             if (x > 1) {
                 swipeGestureListener.onSwipeRight();
             } else if (x < -1) {

@@ -1,35 +1,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_flashcard_game_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".FlashcardGameActivity"
-    android:id="@+id/root_flashcard_game_id">
+    tools:context=".FlashcardGameActivity">
 
     <!-- Sección "To Learn" -->
     <LinearLayout
-        android:id="@+id/toLearnContainer"
+        android:id="@+id/learnedBox"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:background="@drawable/learn_box_background"
-        android:elevation="4dp"
+        android:background="@drawable/ripple_rounded_background"
+        android:elevation="8dp"
         android:gravity="center"
-        android:paddingVertical="8dp"
-        android:padding="16sp"
-        android:layout_marginBottom="8dp">
+        android:paddingVertical="16dp"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true">
 
         <TextView
             android:id="@+id/toLearnTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aprender"
+            android:text="Aprendida"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/layoutParentCardId"
@@ -45,50 +48,73 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:background="@drawable/next"
-            android:rotation="180"
             android:orientation="horizontal"
-            />
+            android:rotation="180"
 
-    <!-- Contenedor de la tarjeta -->
-    <FrameLayout
-        android:id="@+id/flashcardContainer"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="8"
-        android:layout_marginHorizontal="2sp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center" />
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:src="@drawable/next"
+
+                />
+
+
+        </LinearLayout>
+
+        <!-- Contenedor de la tarjeta -->
+        <FrameLayout
+            android:id="@+id/flashcardContainer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="8"
+            android:gravity="center" />
 
         <LinearLayout
             android:id="@+id/right_arrow_flashcard_id"
-            android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:background="@drawable/next"
             android:gravity="center"
-            />
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:src="@drawable/next"
+
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Sección "Learnd" -->
     <LinearLayout
-        android:id="@+id/aprendidaContainer"
+        android:id="@+id/ToLearnedBox"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:background="@drawable/learned_box_background"
+
+        android:background="@drawable/learn_box_background"
         android:elevation="4dp"
-        android:padding="16sp"
         android:gravity="center"
-        android:paddingVertical="8dp">
+        android:padding="16sp"
+        android:paddingVertical="8dp"
+        android:visibility="invisible">
 
         <TextView
-            android:id="@+id/aprendidaTextView"
+            android:id="@+id/tvtoLearn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aprendida"
+            android:text="Aprender"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />

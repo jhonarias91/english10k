@@ -17,8 +17,17 @@ public class UserRepository {
     private UserDao dao;
     private SharedPreferences sharedPreferences;
     private ExecutorService executorService;
+private static UserRepository instance;
 
-    public UserRepository(Application application) {
+    public static UserRepository getInstance(Application application) {
+        if (instance == null) {
+            instance = new UserRepository(application);
+        }
+        return instance;
+    }
+
+
+    private UserRepository(Application application) {
         English10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
         dao = db.userDao();
         sharedPreferences = application.getSharedPreferences("user_prefs", Application.MODE_PRIVATE);

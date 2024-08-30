@@ -13,15 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.faridroid.english10k.viewmodel.FlashcardsSettingsViewModel;
+import com.faridroid.english10k.viewmodel.SeekBarRange;
 import com.faridroid.english10k.viewmodel.WordViewModel;
 import com.faridroid.english10k.viewmodel.dto.UserDTO;
 import com.faridroid.english10k.viewmodel.factory.FlashcardsSettingsViewModelFactory;
 
 public class FlashcardsSettingsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    //Get this in base to user level
-    private int minWords = 5;
-    private long maxWords = 100;
+
     private UserDTO user;
 
     Spinner rangeSpinner;
@@ -33,6 +32,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     private Button btnGoHome;
 
     private FlashcardsSettingsViewModel viewModel;
+    private SeekBarRange seekBarRange;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,10 +74,9 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
 
         viewModel.getRange().observe(this, seekBarRange -> {
             if (seekBarRange != null) {
-                minWords = seekBarRange.getMin();
-                maxWords = seekBarRange.getMax();
-                wordCountSeekBar.setMax((int) maxWords);
-                wordCountSeekBar.setMin(minWords);
+                this.seekBarRange = seekBarRange;
+                wordCountSeekBar.setMax(seekBarRange.getMax());
+                wordCountSeekBar.setMin(seekBarRange.getMin());
                 wordCountSeekBar.setProgress(seekBarRange.getProgress());
                 wordCountText.setText(seekBarRange.getProgress() + " Palabras");
             }
@@ -106,14 +105,14 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
         int currentValue = wordCountSeekBar.getProgress();
 
         if (view.getId() == R.id.increment_button) {
-            int incrementValue = getIncrementValueBasedOnMax(currentValue + minWords);
+            int incrementValue = getIncrementValueBasedOnMax(currentValue + seekBarRange.getMin());
             if (currentValue + incrementValue <= wordCountSeekBar.getMax()) {
                 wordCountSeekBar.setProgress(currentValue + incrementValue);
             } else {
                 wordCountSeekBar.setProgress(wordCountSeekBar.getMax());
             }
         } else if (view.getId() == R.id.decrement_button) {
-            int decrementValue = getIncrementValueBasedOnMax(currentValue - minWords);
+            int decrementValue = getIncrementValueBasedOnMax(currentValue - seekBarRange.getMin());
             if (currentValue - decrementValue >= 0) {
                 wordCountSeekBar.setProgress(currentValue - decrementValue);
             } else {
@@ -121,7 +120,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             }
         }else if (view.getId() == R.id.start_flashcards_button){
             Intent intent = new Intent(FlashcardsSettingsActivity.this, FlashcardGameActivity.class);
-            intent.putExtra("maxWords", this.maxWords);
+            intent.putExtra("maxWords", this.seekBarRange.getMax());
             intent.putExtra("user", this.user);
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
@@ -138,12 +137,12 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     private int getIncrementValueBasedOnMax(int value) {
         if (value <= 100) {
             return 10; // Incremento mínimo de 10 para valores entre 10 y 100
-        } else if (value <= 0.1 * maxWords) {
-            return (int) (0.01 * maxWords); // Incremento del 1% del máximo
-        } else if (value <= 0.5 * maxWords) {
-            return (int) (0.05 * maxWords); // Incremento del 5% del máximo
+        } else if (value <= 0.1 * seekBarRange.getMax()) {
+            return (int) (0.01 * seekBarRange.getMax()); // Incremento del 1% del máximo
+        } else if (value <= 0.5 * seekBarRange.getMax()) {
+            return (int) (0.05 * seekBarRange.getMax()); // Incremento del 5% del máximo
         } else {
-            return (int) (0.1 * maxWords); // Incremento del 10% del máximo para valores altos
+            return (int) (0.1 * seekBarRange.getMax()); // Incremento del 10% del máximo para valores altos
         }
     }
 }

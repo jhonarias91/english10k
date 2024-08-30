@@ -32,7 +32,9 @@
             android:padding="32sp"
             android:textSize="32sp"
             android:visibility="visible"
-            tools:text="Hello" >
+            tools:text="Hello"
+            android:background="@drawable/ripple_rounded_background"
+            >
 
         </TextView>
 
@@ -44,7 +46,17 @@
             android:padding="32sp"
             android:textSize="32sp"
             android:visibility="gone"
-            tools:text="Hola" />
+            tools:text="Hola"
+            android:background="@drawable/ripple_rounded_background"
+            />
+
     </FrameLayout>
+        <ImageButton
+            android:id="@+id/imgBtnFlashSpeaker"
+            android:layout_width="32sp"
+            android:layout_height="32sp"
+            android:layout_gravity="center"
+            android:layout_margin="8sp"
+            android:background="@drawable/speaker_filled" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

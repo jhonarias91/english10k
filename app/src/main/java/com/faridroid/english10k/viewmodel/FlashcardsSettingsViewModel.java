@@ -23,10 +23,10 @@ public class FlashcardsSettingsViewModel extends AndroidViewModel {
     }
 
     public LiveData<SeekBarRange> getRange() {
-        return Transformations.map(wordViewModel.getTotalWords(), totalWords -> {
-            if (totalWords != null) {
+        return Transformations.map(wordViewModel.getTotalWords(), totalDbWords -> {
+            if (totalDbWords != null) {
                 int min = 5;
-                int max = (int) Math.min(totalWords,this.user.getXp() + 100);;
+                int max = Math.min((int) Math.min(totalDbWords,this.user.getXp() + 100), totalDbWords);
                 int savedProgress = preferences.getInt("flashcards_range", -1);
 
                 int progress = (savedProgress != -1) ? savedProgress : max / 2;

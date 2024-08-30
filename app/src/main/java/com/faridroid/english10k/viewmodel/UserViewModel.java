@@ -3,7 +3,6 @@ package com.faridroid.english10k.viewmodel;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.LiveData;
 import android.app.Application;
 import android.util.Log;
@@ -21,7 +20,7 @@ public class UserViewModel extends AndroidViewModel {
 
     public UserViewModel(Application application) {
         super(application);
-        userRepository = new UserRepository(application);
+        userRepository = UserRepository.getInstance(application);
         userLiveData = userRepository.getUserById();
     }
 
