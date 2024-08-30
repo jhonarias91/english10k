@@ -27,6 +27,7 @@
         <activity android:name=".FlashcardsSettingsActivity" />
 
         <activity android:name=".FlashcardGameActivity" />
+        <activity android:name=".LearnedWordsActivity" />
     </application>
 
 </manifest>

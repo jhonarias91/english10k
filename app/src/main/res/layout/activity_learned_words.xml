@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LearnedWordsActivity">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:background="?android:attr/windowBackground">
+
+        <!-- Encabezado -->
+        <TextView
+            android:id="@+id/textViewLearnedWordsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Palabras Aprendidas"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="8dp" />
+
+        <!-- Contador -->
+        <TextView
+            android:id="@+id/textViewLearnedWordsCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Has aprendido 150 palabras"
+            android:textSize="16sp"
+            android:layout_below="@id/textViewLearnedWordsHeader"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="16dp" />
+
+        <!-- Buscador -->
+        <EditText
+            android:id="@+id/editTextSearchLearnedWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar palabra..."
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_below="@id/textViewLearnedWordsCounter" />
+
+        <!-- Lista de Palabras Aprendidas -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewLearnedWords"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_below="@id/editTextSearchLearnedWords"
+            android:layout_marginTop="16dp"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp" />
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

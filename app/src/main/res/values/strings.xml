@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">English 10k</string>
     <string name="btn_main_flashcards_text">Jugar Flashcards</string>
+    <string name="title_activity_learned_words">LearnedWords</string>
 </resources>

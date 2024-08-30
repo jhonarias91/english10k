@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations;
 
 import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.repository.UserProgressRepository;
+import com.faridroid.english10k.viewmodel.dto.ProgressType;
 import com.faridroid.english10k.viewmodel.dto.UserProgressDTO;
 
 import java.util.ArrayList;
@@ -29,8 +30,12 @@ public class UserProgressService {
         userProgressRepository = UserProgressRepository.getInstance(application);
     }
 
+    public void deleteUserProgress(int id) {
+        userProgressRepository.deleteUserProgress(id);
+    }
+
     public LiveData<List<UserProgressDTO>> getAllUserProgress(String userId) {
-        LiveData<List<UserProgress>> allUserProgress = userProgressRepository.getAllUserProgress(userId);
+        LiveData<List<UserProgress>> allUserProgress = userProgressRepository.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
 
         return Transformations.map(allUserProgress, userProgressList -> {
             List<UserProgressDTO> dtoList = new ArrayList<>();
@@ -47,8 +52,6 @@ public class UserProgressService {
             }
             return dtoList;
         });
-
-
     }
 
     public void insertUserProgress(UserProgressDTO userProgress) {
