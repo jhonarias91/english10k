@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "660002f99d2478dbb0a574226111eade",
+    "identityHash": "be1ed2c006c3e1775ea60f15a46a6ec2",
     "entities": [
       {
         "tableName": "words",
@@ -85,23 +85,23 @@
       },
       {
         "tableName": "user_progress",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `userId` TEXT NOT NULL, `status` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `progressType` TEXT NOT NULL DEFAULT '1')",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_progress_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word_id` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `status` INTEGER NOT NULL, `updated` INTEGER, `progress_type` TEXT NOT NULL DEFAULT '1')",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "userProgressId",
+            "columnName": "user_progress_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "wordId",
-            "columnName": "wordId",
+            "columnName": "word_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "userId",
-            "columnName": "userId",
+            "columnName": "user_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -112,14 +112,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "lastUpdated",
-            "columnName": "lastUpdated",
+            "fieldPath": "updated",
+            "columnName": "updated",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "progressType",
-            "columnName": "progressType",
+            "columnName": "progress_type",
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "'1'"
@@ -128,7 +128,7 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "id"
+            "user_progress_id"
           ]
         },
         "indices": [],
@@ -227,7 +227,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '660002f99d2478dbb0a574226111eade')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'be1ed2c006c3e1775ea60f15a46a6ec2')"
     ]
   }
 }

@@ -2,7 +2,6 @@ package com.faridroid.english10k.game;
 
 import android.app.Application;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 
 import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.service.UserProgressService;
@@ -14,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class FlashcardGameManager {
@@ -54,7 +52,7 @@ public class FlashcardGameManager {
     }
 
     public boolean hasMoreWords(){
-        return currentCardPosition < allPosibleWords.size();
+        return allPosibleWords != null && !allPosibleWords.isEmpty();
     }
 
     public void nextWord() {
@@ -106,8 +104,8 @@ public class FlashcardGameManager {
     }
 
     public void addLearnedWord() {
-        UserProgressDTO userProgressDTO = new UserProgressDTO(getCurrentWord().getId(), user.getId(), ProgressType.WORD_LEARNED);
+        UserProgressDTO userProgressDTO = new UserProgressDTO(0, getCurrentWord().getId(), user.getId(),0,0, ProgressType.WORD_LEARNED);
         userProgressService.insertUserProgress(userProgressDTO);
-        setScore(score+1);
+        this.user.setXp(this.user.getXp() + 1);
     }
 }

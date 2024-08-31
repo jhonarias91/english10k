@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/card_background"
-    android:padding="16dp"
-    android:layout_marginBottom="8dp"
+    android:padding="4dp"
+    android:layout_marginBottom="2dp"
     android:elevation="4dp">
 
     <!-- Palabra en Inglés -->
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Translation"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginTop="4dp"
         android:textColor="@android:color/darker_gray" />
 
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="end"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="0dp">
 
         <Button
             android:id="@+id/buttonUnmark"
@@ -48,13 +48,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Repasar"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/buttonForget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Olvidar" />
+            android:text="Olvidar"
+            android:visibility="gone"
+            />
 
     </LinearLayout>
 

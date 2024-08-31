@@ -6,10 +6,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
-import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.data.repository.WordRepository;
 import com.faridroid.english10k.service.UserProgressService;
+import com.faridroid.english10k.viewmodel.dto.ProgressType;
 import com.faridroid.english10k.viewmodel.dto.UserProgressDTO;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class WordViewModel extends AndroidViewModel {
     public LiveData<List<Word>> getWordsByLimit(int limit, String userId) {
         // TODO: 29/08/2024 change to limit 
         LiveData<List<Word>> wordsByLimit = repository.getWordsByLimit(5);
-        LiveData<List<UserProgressDTO>> allUserProgress = userProgressService.getAllUserProgress(userId);
+        LiveData<List<UserProgressDTO>> allUserProgress = userProgressService.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
 
         //if the word on wordsByLimit is already learned, remove it from the list
 

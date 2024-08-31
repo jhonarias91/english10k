@@ -1,5 +1,7 @@
 package com.faridroid.english10k.viewmodel.dto;
 
+import androidx.room.Ignore;
+
 import org.jetbrains.annotations.NotNull;
 
 public class UserProgressDTO{
@@ -14,13 +16,8 @@ public class UserProgressDTO{
     // Constructors
     public UserProgressDTO() {}
 
-    public UserProgressDTO(int wordId, String userId,ProgressType progressType) {
-        this.wordId = wordId;
-        this.userId = userId;
-        this.status = 1; //default status 1
-        this.progressType = progressType;
-    }
 
+    @Ignore
     public UserProgressDTO(int id, int wordId, String userId, int status, long lastUpdated, ProgressType progressType) {
         this.id = id;
         this.wordId = wordId;

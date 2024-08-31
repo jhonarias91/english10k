@@ -11,29 +11,38 @@ import org.jetbrains.annotations.NotNull;
 @Entity(tableName = "user_progress")
 public class UserProgress {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    @ColumnInfo(name = "user_progress_id")
+    private int userProgressId;
+    @ColumnInfo(name = "word_id")
     private int wordId;
     @NotNull
+    @ColumnInfo(name = "user_id")
     private String userId;
     private int status;
-    @ColumnInfo(name = "lastUpdated")
-    private long lastUpdated;
-    @ColumnInfo(name = "progressType", defaultValue = "1")
+    @ColumnInfo(name = "updated")
+    private Long updated;
+    @ColumnInfo(name = "progress_type", defaultValue = "1")
     @NotNull
     private ProgressType progressType; //1 -> word learned
 
-    public UserProgress(int id, int wordId, @NotNull String userId, int status, long lastUpdated, @NotNull ProgressType progressType) {
-        this.id = id;
+    public UserProgress(int userProgressId, int wordId, @NotNull String userId, int status, Long updated, @NotNull ProgressType progressType) {
+        this.userProgressId = userProgressId;
         this.wordId = wordId;
         this.userId = userId;
         this.status = status;
-        this.lastUpdated = lastUpdated;
+        this.updated = updated;
         this.progressType = progressType;
     }
 
     // Getters y Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+
+    public int getUserProgressId() {
+        return userProgressId;
+    }
+
+    public void setUserProgressId(int userProgressId) {
+        this.userProgressId = userProgressId;
+    }
 
     public int getWordId() { return wordId; }
     public void setWordId(int wordId) { this.wordId = wordId; }
@@ -50,8 +59,13 @@ public class UserProgress {
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
 
-    public long getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(long lastUpdated) { this.lastUpdated = lastUpdated; }
+    public Long getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Long updated) {
+        this.updated = updated;
+    }
 
     @NotNull
     public ProgressType getProgressType() {

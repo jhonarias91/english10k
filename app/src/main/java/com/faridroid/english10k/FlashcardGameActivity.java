@@ -68,7 +68,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
     private ImageButton imgBtnFlashSpeaker;
     private TextToSpeech textToSpeech;
-
+    private int scoreAdedWord = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +131,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         flashcardView = getLayoutInflater().inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
         frameCardLayoutContainer.addView(flashcardView);
         Word currentWord = gameManager.getCurrentWord();
+        scoreAdedWord = 0;
         if (currentWord == null){
                 showEndGameDialog(2);
         }else{
@@ -224,6 +225,18 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             gameManager.speakCurrentWord();
         } else if (id == R.id.learnedBox) {
             gameManager.addLearnedWord();
+            userViewModel.updateXp(user.getId(), user.getXp() + 1);
+            this.scoreAdedWord++;
+            this.user.setXp(user.getXp() + 1);
+            if (gameManager.hasNextWord()) {
+                if (gameManager.hasMoreWords()){
+                    showFlashcard(gameManager.getCurrentWord());
+                }else{
+                    showEndGameDialog(2);
+                }
+            } else {
+                showEndGameDialog(1);
+            }
         }
 
     }
@@ -294,10 +307,10 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (gameManager.getScore() > 0) {
-                    userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore());
-                    user.setXp(user.getXp() + gameManager.getScore());
+                    userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore() + scoreAdedWord);
+                    user.setXp(user.getXp() + gameManager.getScore() - scoreAdedWord);
+                    scoreAdedWord = 0;
                 }
-
 
                 // Animación de Fade Out
                 View rootView = findViewById(android.R.id.content);
@@ -311,8 +324,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                         showFlashcard(gameManager.getCurrentWord());
                     }
                 }).start();
-
-
             }
         });
 
@@ -321,7 +332,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (gameManager.getScore() > 0) {
-                    userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore());
+                    userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore() - scoreAdedWord);
                 }
                 // Ir a la actividad de configuraciones
                 Intent intent = new Intent(FlashcardGameActivity.this, FlashcardsSettingsActivity.class);
@@ -350,7 +361,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         float delta = acelVal - acelLast;
         //lower values of shake is more sensible
         shake = shake * 0.85f + delta; // Se aplica un filtro para suavizar la señal
-
 
         // Check the sensibility
         if (shake > 10 && !isShakeDetected) { // El umbral de detección puede ajustarse

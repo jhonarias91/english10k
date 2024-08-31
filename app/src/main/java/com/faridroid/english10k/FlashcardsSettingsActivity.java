@@ -30,6 +30,8 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     Button incrementButton;
     Button decrementButton;
     private Button btnGoHome;
+    private Button btnGoLearnedWords;
+
 
     private FlashcardsSettingsViewModel viewModel;
     private SeekBarRange seekBarRange;
@@ -44,11 +46,14 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
         wordCountSeekBar.setOnSeekBarChangeListener(this);
 
         btnStartGame = findViewById(R.id.start_flashcards_button);
+        btnGoLearnedWords = findViewById(R.id.btnGoLearnedWords);
+
         wordCountSeekBar.setOnSeekBarChangeListener(this);
         incrementButton = findViewById(R.id.increment_button);
         decrementButton = findViewById(R.id.decrement_button);
 
         btnStartGame.setOnClickListener(this);
+        btnGoLearnedWords.setOnClickListener(this);
         incrementButton.setOnClickListener(this);
         decrementButton.setOnClickListener(this);
 
@@ -60,7 +65,6 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
 
         SharedPreferences preferences = getSharedPreferences("english10k_settings", MODE_PRIVATE);
-
 
         // Crear la instancia del ViewModelFactory
         FlashcardsSettingsViewModelFactory factory = new FlashcardsSettingsViewModelFactory(getApplication(), wordViewModel, preferences, user);
@@ -131,6 +135,10 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
 
         }else if (view.getId() == R.id.btnGoHome){
             Intent intent = new Intent(FlashcardsSettingsActivity.this, MainActivity.class);
+            startActivity(intent);
+        }else if (view.getId() == R.id.btnGoLearnedWords){
+            Intent intent = new Intent(FlashcardsSettingsActivity.this, LearnedWordsActivity.class);
+            intent.putExtra("user", this.user);
             startActivity(intent);
         }
     }

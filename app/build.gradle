@@ -67,6 +67,7 @@ dependencies {
 
     //UI
     implementation libs.androidx.cardview
+    implementation libs.androidx.recyclerview
 }
 
 

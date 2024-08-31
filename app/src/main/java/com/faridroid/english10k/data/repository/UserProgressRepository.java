@@ -10,6 +10,7 @@ import com.faridroid.english10k.data.database.DatabaseClient;
 import com.faridroid.english10k.data.database.English10kDatabase;
 import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.viewmodel.dto.ProgressType;
+import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -48,6 +49,11 @@ public class UserProgressRepository {
         return dao.getAllUserProgressByType(userId, progressType);
     }
 
+    public LiveData<List<UserProgressWordJoinDTO>> listUserProgressWithWord(String userId, ProgressType progressType){
+        return dao.listUserProgressWithWord(userId, progressType);
+    }
+
+
     //delete userProgress by progressId
     public void deleteUserProgress(int id) {
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
@@ -60,7 +66,6 @@ public class UserProgressRepository {
             }
         });
     }
-
 
     public void insertUserProgress(UserProgress userProgress) {
 

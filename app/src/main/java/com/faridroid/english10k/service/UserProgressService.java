@@ -9,10 +9,10 @@ import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.repository.UserProgressRepository;
 import com.faridroid.english10k.viewmodel.dto.ProgressType;
 import com.faridroid.english10k.viewmodel.dto.UserProgressDTO;
+import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class UserProgressService {
 
@@ -26,7 +26,7 @@ public class UserProgressService {
         return instance;
     }
 
-    public UserProgressService(Application application) {
+    private UserProgressService(Application application) {
         userProgressRepository = UserProgressRepository.getInstance(application);
     }
 
@@ -34,18 +34,18 @@ public class UserProgressService {
         userProgressRepository.deleteUserProgress(id);
     }
 
-    public LiveData<List<UserProgressDTO>> getAllUserProgress(String userId) {
-        LiveData<List<UserProgress>> allUserProgress = userProgressRepository.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
+    public LiveData<List<UserProgressDTO>> getAllUserProgressByType(String userId , ProgressType progressType) {
+        LiveData<List<UserProgress>> allUserProgress = userProgressRepository.getAllUserProgressByType(userId,progressType);
 
         return Transformations.map(allUserProgress, userProgressList -> {
             List<UserProgressDTO> dtoList = new ArrayList<>();
             for (UserProgress up : userProgressList) {
                 UserProgressDTO dto = new UserProgressDTO(
-                        up.getId(),
+                        up.getWordId(),
                         up.getWordId(),
                         up.getUserId(),
                         up.getStatus(),
-                        up.getLastUpdated(),
+                        up.getUpdated(),
                         up.getProgressType()
                 );
                 dtoList.add(dto);
@@ -64,6 +64,10 @@ public class UserProgressService {
                 userProgress.getProgressType()
         );
         userProgressRepository.insertUserProgress(userProgressEntity);
+    }
+
+    public LiveData<List<UserProgressWordJoinDTO>> listUserProgressWithWord(String userId, ProgressType progressType) {
+        return  userProgressRepository.listUserProgressWithWord(userId,progressType);
     }
 
 }
