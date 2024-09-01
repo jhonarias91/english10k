@@ -24,12 +24,10 @@ public class CustomWord {
     @ColumnInfo(name = "spanish")
     private String spanish;  // The translation of the word
 
-    // Constructor, getters, and setters
-
-    public CustomWord(int listId, String word, String translation) {
+    public CustomWord(int listId, String word, String spanish) {
         this.listId = listId;
         this.word = word;
-        this.spanish = translation;
+        this.spanish = spanish;
     }
 
     public int getId() {
