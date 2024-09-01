@@ -36,7 +36,9 @@ public interface UserProgressDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Transaction
-    @Query("SELECT * FROM user_progress INNER JOIN words ON user_progress.word_id = words.id WHERE user_progress.user_id = :userId AND user_progress.progress_type = :progressType")
+    @Query("SELECT * FROM user_progress INNER JOIN words ON user_progress.word_id = words.id " +
+            "WHERE user_progress.user_id = :userId AND user_progress.progress_type = :progressType " +
+            "ORDER BY user_progress.user_progress_id DESC")
     LiveData<List<UserProgressWordJoinDTO>> listUserProgressWithWord(String userId, ProgressType progressType);
 
 

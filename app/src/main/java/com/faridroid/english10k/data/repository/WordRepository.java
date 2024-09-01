@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import com.faridroid.english10k.data.dao.WordDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
-import com.faridroid.english10k.data.database.English10kDatabase;
+import com.faridroid.english10k.data.database.Room10kDatabase;
 import com.faridroid.english10k.data.entity.Word;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class WordRepository {
     }
 
     private WordRepository(Application application) {
-        English10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
+        Room10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
         wordDao = db.wordDao();
     }
 

@@ -3,6 +3,7 @@ package com.faridroid.english10k;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -10,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.faridroid.english10k.viewmodel.FlashcardsSettingsViewModel;
@@ -32,14 +34,22 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     private Button btnGoHome;
     private Button btnGoLearnedWords;
 
-
-    private FlashcardsSettingsViewModel viewModel;
+    private FlashcardsSettingsViewModel flashcardsSettingsViewModel;
     private SeekBarRange seekBarRange;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flashcard_settings);
+
+        // Configurar la Toolbar como ActionBar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         wordCountSeekBar = findViewById(R.id.word_count_seekbar);
         wordCountText = findViewById(R.id.word_count_text);
@@ -61,22 +71,21 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
         btnGoHome.setOnClickListener(this);
         this.user = (UserDTO) getIntent().getSerializableExtra("user");
 
-        WordViewModel wordViewModel = wordViewModel = new ViewModelProvider(this,
+        WordViewModel wordViewModel  = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
 
         SharedPreferences preferences = getSharedPreferences("english10k_settings", MODE_PRIVATE);
 
-        // Crear la instancia del ViewModelFactory
         FlashcardsSettingsViewModelFactory factory = new FlashcardsSettingsViewModelFactory(getApplication(), wordViewModel, preferences, user);
-        // Instanciar el ViewModel usando el Factory
-        viewModel = new ViewModelProvider(this, factory).get(FlashcardsSettingsViewModel.class);
+        // Instanciate ViewModel using Factory, todo: check if this is the right way to do it
+        flashcardsSettingsViewModel = new ViewModelProvider(this, factory).get(FlashcardsSettingsViewModel.class);
 
         setRange();
     }
 
     private void setRange() {
 
-        viewModel.getRange().observe(this, seekBarRange -> {
+        flashcardsSettingsViewModel.getRange().observe(this, seekBarRange -> {
             if (seekBarRange != null) {
                 this.seekBarRange = seekBarRange;
                 wordCountSeekBar.setMax(seekBarRange.getMax());
@@ -129,7 +138,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
 
-            viewModel.setRange(wordsToPlay);
+            flashcardsSettingsViewModel.setRange(wordsToPlay);
 
             startActivity(intent);
 
@@ -152,5 +161,14 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
         } else {
             return (int) (0.1 * seekBarRange.getMax()); // Incremento del 10% del máximo para valores altos
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

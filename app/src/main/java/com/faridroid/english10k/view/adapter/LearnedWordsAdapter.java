@@ -4,23 +4,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.faridroid.english10k.R;
+import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class LearnedWordsAdapter extends RecyclerView.Adapter<LearnedWordsAdapter.WordViewHolder> {
+public class LearnedWordsAdapter extends RecyclerView.Adapter<LearnedWordsAdapter.WordViewHolder> implements Filterable {
 
     private List<UserProgressWordJoinDTO> learnedWords;
+    private List<UserProgressWordJoinDTO> filteredList;
     private OnLearnedWordClickListener listener;
 
     public LearnedWordsAdapter(List<UserProgressWordJoinDTO> learnedWords, OnLearnedWordClickListener listener) {
         this.learnedWords = learnedWords;
+        this.filteredList = new ArrayList<>(learnedWords);
         this.listener = listener;
     }
 
@@ -34,13 +40,51 @@ public class LearnedWordsAdapter extends RecyclerView.Adapter<LearnedWordsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull WordViewHolder holder, int position) {
-        UserProgressWordJoinDTO word = learnedWords.get(position);
+        UserProgressWordJoinDTO word = filteredList.get(position);
         holder.bind(word, listener);
     }
 
     @Override
     public int getItemCount() {
-        return learnedWords.size();
+        return filteredList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String query = constraint.toString().toLowerCase().trim();
+                List<UserProgressWordJoinDTO> filtered = new ArrayList<>();
+
+                if (query.isEmpty()) {
+                    filtered = learnedWords;
+                } else {
+                    for (UserProgressWordJoinDTO item : learnedWords) {
+                        final Word word = item.getWord();
+                        if (word.getWord().toLowerCase().contains(query) || word.getSpanish().toLowerCase().contains(query)) {
+                            filtered.add(item);
+                        }
+                    }
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = filtered;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredList = (List<UserProgressWordJoinDTO>) results.values;
+                notifyDataSetChanged();
+                listener.onFilterResults(filteredList.size());
+            }
+        };
+    }
+
+    public void filter(String query) {
+        getFilter().filter(query);
     }
 
     public static class WordViewHolder extends RecyclerView.ViewHolder {

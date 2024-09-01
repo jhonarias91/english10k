@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".AddWordToCustomListActivity">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Selección de Categoría -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar Categoría"
+            android:textSize="16sp"
+            android:paddingBottom="8dp"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar o crear categoría"
+            android:inputType="text"
+            android:completionHint="Buscar categorías"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Selección de Lista dentro de la Categoría -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar Lista"
+            android:textSize="16sp"
+            android:paddingBottom="8dp"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar o crear lista"
+            android:inputType="text"
+            android:completionHint="Buscar listas"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Formulario para agregar palabra -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Par (Word, Spanish)"
+            android:textSize="16sp"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/editTextWord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Palabra en inglés"
+            android:inputType="text"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/editTextTranslation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Traducción en español"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/buttonAddPair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar Palabra a la Lista"/>
+
+        <!-- Lista de Palabras Agregadas -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Palabras en la Lista"
+            android:textSize="16sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewWordPairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,7 +1,5 @@
 package com.faridroid.english10k.viewmodel.dto;
 
-import androidx.room.Ignore;
-
 import org.jetbrains.annotations.NotNull;
 
 public class WordDTO {
@@ -25,7 +23,10 @@ public class WordDTO {
         this.updated = updated;
     }
 
-
+    public WordDTO(String word, String spanish) {
+        this.word = word;
+        this.spanish = spanish;
+    }
 
     public int getId() {
         return id;

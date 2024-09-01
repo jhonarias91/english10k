@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "be1ed2c006c3e1775ea60f15a46a6ec2",
+    "identityHash": "ffc895559946cd07e3fec1c8826103b0",
     "entities": [
       {
         "tableName": "words",
@@ -53,7 +53,7 @@
       },
       {
         "tableName": "categories",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `categoryName` TEXT, `description` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `original_name` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -62,14 +62,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "categoryName",
-            "columnName": "categoryName",
+            "fieldPath": "name",
+            "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "description",
-            "columnName": "description",
+            "fieldPath": "originalName",
+            "columnName": "original_name",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -227,7 +227,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'be1ed2c006c3e1775ea60f15a46a6ec2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ffc895559946cd07e3fec1c8826103b0')"
     ]
   }
 }

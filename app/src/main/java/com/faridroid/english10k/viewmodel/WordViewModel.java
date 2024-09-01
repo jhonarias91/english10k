@@ -43,7 +43,7 @@ public class WordViewModel extends AndroidViewModel {
         );
     }
 
-    //todo: here need logic to exclude the one already learned
+    //todo: here check if needed to exclude the one already learned
     public LiveData<Integer> getTotalWords() {
         return repository.getTotalWords();
     }

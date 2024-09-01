@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import com.faridroid.english10k.data.dao.UserProgressDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
-import com.faridroid.english10k.data.database.English10kDatabase;
+import com.faridroid.english10k.data.database.Room10kDatabase;
 import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.viewmodel.dto.ProgressType;
 import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
@@ -34,7 +34,7 @@ public class UserProgressRepository {
     }
 
     private UserProgressRepository(Application application) {
-        English10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
+        Room10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
         dao = db.userProgressDao();
         executorService = Executors.newFixedThreadPool(1);
         //sharedPreferences = application.getSharedPreferences("user_prefs", Application.MODE_PRIVATE);

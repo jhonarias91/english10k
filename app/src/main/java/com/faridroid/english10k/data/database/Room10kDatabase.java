@@ -14,8 +14,8 @@ import com.faridroid.english10k.data.entity.User;
 import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.entity.Word;
 
-@Database(entities = {Word.class, Category.class, UserProgress.class, TestResult.class, User.class}, version = 1, exportSchema = true)
-public abstract class English10kDatabase extends RoomDatabase {
+@Database(entities = {Word.class, Category.class, UserProgress.class, TestResult.class, User.class}, version = 2, exportSchema = true)
+public abstract class Room10kDatabase extends RoomDatabase {
     public abstract WordDao wordDao();
     public abstract CategoryDao categoryDao();
     public abstract UserProgressDao userProgressDao();

@@ -88,7 +88,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         LinearLayout learnedBox = findViewById(R.id.learnedBox);
         learnedBox.setOnClickListener(this);
 
-        // Inicializar Text-to-Speech
+        // Initialize Text-to-Speech
         textToSpeech = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech.setLanguage(Locale.US);
@@ -216,7 +216,6 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         }
         int id = view.getId();
 
-
         if (id == R.id.left_arrow_flashcard_id) {
             swipeGestureListener.onSwipeRight();
         } else if (id == R.id.right_arrow_flashcard_id) {
@@ -225,7 +224,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             gameManager.speakCurrentWord();
         } else if (id == R.id.learnedBox) {
             gameManager.addLearnedWord();
-            userViewModel.updateXp(user.getId(), user.getXp() + 1);
+            userViewModel.updateXp(user.getId(), user.getXp());
             this.scoreAdedWord++;
             this.user.setXp(user.getXp() + 1);
             if (gameManager.hasNextWord()) {
@@ -270,7 +269,12 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         gameManager.nextWord();
         if (gameManager.hasNextWord()) {
             if (gameManager.hasMoreWords()){
-                showFlashcard(gameManager.getCurrentWord());
+                Word currentWord = gameManager.getCurrentWord();
+                if (currentWord == null) {
+                    showEndGameDialog(2);
+                }else{
+                        showFlashcard(currentWord);
+                    }
             }else{
                 showEndGameDialog(2);
             }
@@ -312,7 +316,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                     scoreAdedWord = 0;
                 }
 
-                // Animación de Fade Out
+                //Fade Out
                 View rootView = findViewById(android.R.id.content);
                 rootView.animate().alpha(0f).setDuration(200).withEndAction(new Runnable() {
                     @Override

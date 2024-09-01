@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import com.faridroid.english10k.data.dao.UserDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
-import com.faridroid.english10k.data.database.English10kDatabase;
+import com.faridroid.english10k.data.database.Room10kDatabase;
 import com.faridroid.english10k.data.entity.User;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +28,7 @@ private static UserRepository instance;
 
 
     private UserRepository(Application application) {
-        English10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
+        Room10kDatabase db = DatabaseClient.getDatabase(application.getApplicationContext());
         dao = db.userDao();
         sharedPreferences = application.getSharedPreferences("user_prefs", Application.MODE_PRIVATE);
         executorService = Executors.newFixedThreadPool(1);
