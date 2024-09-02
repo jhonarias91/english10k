@@ -21,15 +21,15 @@ public interface CustomWordDao {
     void updateCustomWord(CustomWord customWord);
 
     @Query("SELECT * FROM custom_words WHERE id = :id")
-    CustomWord getCustomWordById(int id);
+    CustomWord getCustomWordById(String id);
 
     @Query("SELECT * FROM custom_words WHERE list_id = :listId")
-    LiveData<List<CustomWord>> getCustomWordsByList(int listId);
+    LiveData<List<CustomWord>> getCustomWordsByList(String listId);
 
     @Transaction
     @Query("SELECT * FROM custom_words")
     LiveData<List<CustomWord>> getAllCustomWords();
 
     @Query("DELETE FROM custom_words WHERE id = :id")
-    void deleteCustomWord(int id);
+    void deleteCustomWord(String id);
 }

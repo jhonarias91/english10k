@@ -1,53 +1,33 @@
-package com.faridroid.english10k.data.entity;
+package com.faridroid.english10k.data.dto;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
+public class CustomListDTO {
 
-import org.jetbrains.annotations.NotNull;
-
-@Entity(tableName = "custom_lists",
-        foreignKeys = @ForeignKey(entity = Category.class,
-                parentColumns = "id",
-                childColumns = "category_id",
-                onDelete = ForeignKey.CASCADE))
-public class CustomList {
-
-    @PrimaryKey
-    @NotNull
     private String id;
 
-    @ColumnInfo(name = "name")
     private String name;  // The name that the user can modify
 
-    @ColumnInfo(name = "original_name")
     private String originalName;  // The original name when the list is created or downloaded
 
-    @ColumnInfo(name = "category_id")
     private String categoryId;  // Relationship with the category
 
-    @Ignore
-    public CustomList(String name, String originalName, String categoryId) {
-        this.name = name;
-        this.originalName = originalName;
-        this.categoryId = categoryId;
-    }
-
-    public CustomList(@NotNull String id, String name, String originalName, String categoryId) {
+    public CustomListDTO(String id, String name, String originalName, String categoryId) {
         this.id = id;
         this.name = name;
         this.originalName = originalName;
         this.categoryId = categoryId;
     }
 
-    @NotNull
+    public CustomListDTO(String name, String originalName, String categoryId) {
+        this.name = name;
+        this.originalName = originalName;
+        this.categoryId = categoryId;
+    }
+
     public String getId() {
         return id;
     }
 
-    public void setId(@NotNull String id) {
+    public void setId(String id) {
         this.id = id;
     }
 

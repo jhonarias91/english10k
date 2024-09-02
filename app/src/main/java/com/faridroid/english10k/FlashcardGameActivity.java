@@ -10,13 +10,11 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -25,16 +23,14 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.game.FlashcardGameManager;
 import com.faridroid.english10k.utils.SwipeGestureListener;
-import com.faridroid.english10k.viewmodel.UserViewModel;
-import com.faridroid.english10k.viewmodel.WordViewModel;
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
+import com.faridroid.english10k.view.viewmodel.UserViewModel;
+import com.faridroid.english10k.view.viewmodel.WordViewModel;
+import com.faridroid.english10k.data.dto.UserDTO;
 
 import java.util.Locale;
 

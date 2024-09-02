@@ -3,6 +3,7 @@ package com.faridroid.english10k.data.dao;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -34,4 +35,10 @@ public interface UserDao {
 
     @Query("UPDATE users SET xp = :xp WHERE id = :id")
     void updateXp(String id, long xp);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<User> usersBackup);
+
+    @Query("SELECT * FROM users")
+    List<User> getAllUsersDirect();
 }

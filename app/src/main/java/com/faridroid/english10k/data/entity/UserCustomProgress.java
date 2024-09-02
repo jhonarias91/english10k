@@ -3,25 +3,29 @@ package com.faridroid.english10k.data.entity;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import com.faridroid.english10k.data.dto.ProgressType;
+
+import org.jetbrains.annotations.NotNull;
 
 @Entity(tableName = "user_custom_progress",
         foreignKeys = {
-                @ForeignKey(entity = CustomList.class,
+                @ForeignKey(entity = CustomWord.class,
                             parentColumns = "id",
-                            childColumns = "list_id",
+                            childColumns = "custom_word_id",
                             onDelete = ForeignKey.CASCADE)
         })
 public class UserCustomProgress {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    @NotNull
+    private String id;
 
-    @ColumnInfo(name = "user_id")
-    private int userId;  // Relationship with the user (can reference a User table)
-
-    @ColumnInfo(name = "list_id")
-    private int listId;  // Relationship with the custom list
+    @ColumnInfo(name = "custom_word_id")
+    @NotNull
+    private String customWordId;  // Relationship with the custom word
 
     @ColumnInfo(name = "progress")
     private int progress;  // User's progress in the custom list
@@ -29,35 +33,51 @@ public class UserCustomProgress {
     @ColumnInfo(name = "last_updated")
     private Long lastUpdated;  // Timestamp of the last update
 
-    public UserCustomProgress(int userId, int listId, int progress, Long lastUpdated) {
-        this.userId = userId;
-        this.listId = listId;
-        this.progress = progress;
-        this.lastUpdated = lastUpdated;
+    @ColumnInfo(name = "progress_type", defaultValue = "1")
+    @NotNull
+    private ProgressType progressType; //1 -> word learned
+
+
+    @NotNull
+    public ProgressType getProgressType() {
+        return progressType;
     }
 
-    public int getId() {
+    public void setProgressType(@NotNull ProgressType progressType) {
+        this.progressType = progressType;
+    }
+
+    public UserCustomProgress(@NotNull String id, String customWordId, int progress, Long lastUpdated, ProgressType progressType) {
+        this.id = id;
+        this.customWordId = customWordId;
+        this.progress = progress;
+        this.lastUpdated = lastUpdated;
+        this.progressType = progressType;
+    }
+
+    @Ignore
+    public UserCustomProgress(String customWordId, int progress, Long lastUpdated, ProgressType progressType) {
+        this.customWordId = customWordId;
+        this.progress = progress;
+        this.lastUpdated = lastUpdated;
+        this.progressType = progressType;
+    }
+
+    @NotNull
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(@NotNull String id) {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getCustomWordId() {
+        return customWordId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getListId() {
-        return listId;
-    }
-
-    public void setListId(int listId) {
-        this.listId = listId;
+    public void setCustomWordId(String customWordId) {
+        this.customWordId = customWordId;
     }
 
     public int getProgress() {

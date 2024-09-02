@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel;
+package com.faridroid.english10k.view.viewmodel;
 
 public class SeekBarRange {
     private final int min;

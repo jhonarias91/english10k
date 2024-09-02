@@ -3,14 +3,15 @@ package com.faridroid.english10k.data.dao;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.RoomWarnings;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.faridroid.english10k.data.dto.ProgressType;
+import com.faridroid.english10k.data.dto.UserProgressWordJoinDTO;
 import com.faridroid.english10k.data.entity.UserProgress;
-import com.faridroid.english10k.viewmodel.dto.ProgressType;
-import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
 
 import java.util.List;
 
@@ -41,6 +42,12 @@ public interface UserProgressDao {
             "ORDER BY user_progress.user_progress_id DESC")
     LiveData<List<UserProgressWordJoinDTO>> listUserProgressWithWord(String userId, ProgressType progressType);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<UserProgress> userProgressBackup);
 
+    @Query("SELECT * FROM user_progress")
+    LiveData<List<UserProgress>> getAllUserProgress();
 
+    @Query("SELECT * FROM user_progress")
+    List<UserProgress> getAllUserProgressDirect();
 }

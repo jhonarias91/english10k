@@ -21,15 +21,12 @@ public interface UserCustomProgressDao {
     void updateUserCustomProgress(UserCustomProgress userCustomProgress);
 
     @Query("SELECT * FROM user_custom_progress WHERE id = :id")
-    UserCustomProgress getUserCustomProgressById(int id);
-
-    @Query("SELECT * FROM user_custom_progress WHERE user_id = :userId AND list_id = :listId")
-    LiveData<List<UserCustomProgress>> getUserCustomProgressByUserAndList(int userId, int listId);
+    UserCustomProgress getUserCustomProgressById(String id);
 
     @Transaction
-    @Query("SELECT * FROM user_custom_progress")
-    LiveData<List<UserCustomProgress>> getAllUserCustomProgress();
+    @Query("SELECT * FROM user_custom_progress where custom_word_id = :customWordId")
+    LiveData<List<UserCustomProgress>> getAllUserCustomProgressByCustomWordId(String customWordId);
 
     @Query("DELETE FROM user_custom_progress WHERE id = :id")
-    void deleteUserCustomProgress(int id);
+    void deleteUserCustomProgress(String id);
 }

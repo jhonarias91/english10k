@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel.dto;
+package com.faridroid.english10k.data.dto;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +22,7 @@ public class WordDTO {
         this.range = range;
         this.updated = updated;
     }
+
 
     public WordDTO(String word, String spanish) {
         this.word = word;

@@ -32,12 +32,8 @@ public class UserCustomProgressRepository {
         return instance;
     }
 
-    public LiveData<List<UserCustomProgress>> getAllUserCustomProgress() {
-        return dao.getAllUserCustomProgress();
-    }
-
-    public LiveData<List<UserCustomProgress>> getUserCustomProgressByUserAndList(int userId, int listId) {
-        return dao.getUserCustomProgressByUserAndList(userId, listId);
+    public LiveData<List<UserCustomProgress>> getAllUserCustomProgressByCustomWordId(String listId) {
+        return dao.getAllUserCustomProgressByCustomWordId(listId);
     }
 
     public void insertUserCustomProgress(UserCustomProgress userCustomProgress) {
@@ -48,7 +44,7 @@ public class UserCustomProgressRepository {
         executorService.execute(() -> dao.updateUserCustomProgress(userCustomProgress));
     }
 
-    public void deleteUserCustomProgress(int id) {
+    public void deleteUserCustomProgress(String id) {
         executorService.execute(() -> dao.deleteUserCustomProgress(id));
     }
 }

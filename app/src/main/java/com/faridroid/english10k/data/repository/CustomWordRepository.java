@@ -32,11 +32,7 @@ public class CustomWordRepository {
         return instance;
     }
 
-    public LiveData<List<CustomWord>> getAllCustomWords() {
-        return dao.getAllCustomWords();
-    }
-
-    public LiveData<List<CustomWord>> getCustomWordsByList(int listId) {
+    public LiveData<List<CustomWord>> getCustomWordsByList(String listId) {
         return dao.getCustomWordsByList(listId);
     }
 
@@ -48,7 +44,7 @@ public class CustomWordRepository {
         executorService.execute(() -> dao.updateCustomWord(customWord));
     }
 
-    public void deleteCustomWord(int id) {
+    public void deleteCustomWord(String id) {
         executorService.execute(() -> dao.deleteCustomWord(id));
     }
 }

@@ -14,11 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.faridroid.english10k.viewmodel.FlashcardsSettingsViewModel;
-import com.faridroid.english10k.viewmodel.SeekBarRange;
-import com.faridroid.english10k.viewmodel.WordViewModel;
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
-import com.faridroid.english10k.viewmodel.factory.FlashcardsSettingsViewModelFactory;
+import com.faridroid.english10k.view.viewmodel.FlashcardsSettingsViewModel;
+import com.faridroid.english10k.view.viewmodel.SeekBarRange;
+import com.faridroid.english10k.view.viewmodel.WordViewModel;
+import com.faridroid.english10k.data.dto.UserDTO;
+import com.faridroid.english10k.view.viewmodel.factory.FlashcardsSettingsViewModelFactory;
 
 public class FlashcardsSettingsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 

@@ -7,7 +7,7 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/textViewWord"
+        android:id="@+id/textViewCustomWord"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Word"
@@ -16,7 +16,7 @@
         android:textColor="@android:color/black"/>
 
     <TextView
-        android:id="@+id/textViewTranslation"
+        android:id="@+id/textViewTranslationCustomWord"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Translation"

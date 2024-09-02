@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.faridroid.english10k.viewmodel.dto.ProgressType;
+import com.faridroid.english10k.data.dto.ProgressType;
 
 import org.jetbrains.annotations.NotNull;
 

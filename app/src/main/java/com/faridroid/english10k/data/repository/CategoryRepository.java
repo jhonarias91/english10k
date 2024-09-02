@@ -10,6 +10,7 @@ import com.faridroid.english10k.data.database.Room10kDatabase;
 import com.faridroid.english10k.data.entity.Category;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,19 +33,28 @@ public class CategoryRepository {
         return instance;
     }
 
-    public LiveData<List<Category>> getAllCategories() {
-        return dao.getAllCategories();
+    public LiveData<List<Category>> getAllCategories(String userId) {
+        LiveData<List<Category>> allCategories = dao.getAllCategories(userId);
+        return allCategories;
     }
 
     public void insertCategory(Category category) {
-        executorService.execute(() -> dao.insertCategory(category));
+        CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+        executorService.execute(() -> {
+            try {
+                dao.insertCategory(category);
+                completableFuture.complete(null); // Complete normally
+            } catch (Exception e) {
+                completableFuture.completeExceptionally(e); // Complete with error
+            }
+        });
     }
 
     public void updateCategory(Category category) {
         executorService.execute(() -> dao.updateCategory(category));
     }
 
-    public void deleteCategory(int id) {
+    public void deleteCategory(String id) {
         executorService.execute(() -> dao.deleteCategory(id));
     }
 }

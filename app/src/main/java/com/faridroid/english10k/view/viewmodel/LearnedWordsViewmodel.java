@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel;
+package com.faridroid.english10k.view.viewmodel;
 
 import android.app.Application;
 
@@ -7,8 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.faridroid.english10k.service.UserProgressService;
-import com.faridroid.english10k.viewmodel.dto.ProgressType;
-import com.faridroid.english10k.viewmodel.dto.UserProgressDTO;
+import com.faridroid.english10k.data.dto.ProgressType;
+import com.faridroid.english10k.data.dto.UserProgressDTO;
 
 import java.util.List;
 

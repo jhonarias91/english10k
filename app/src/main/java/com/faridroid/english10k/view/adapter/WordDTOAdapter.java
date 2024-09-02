@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.faridroid.english10k.R;
-import com.faridroid.english10k.viewmodel.dto.WordDTO;
+import com.faridroid.english10k.data.dto.WordDTO;
 
 import java.util.List;
 
@@ -51,8 +51,8 @@ public class WordDTOAdapter extends RecyclerView.Adapter<WordDTOAdapter.WordDTOV
 
         public WordDTOViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewWord = itemView.findViewById(R.id.textViewWord);
-            textViewTranslation = itemView.findViewById(R.id.textViewTranslation);
+            textViewWord = itemView.findViewById(R.id.textViewCustomWord);
+            textViewTranslation = itemView.findViewById(R.id.textViewTranslationCustomWord);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel.factory;
+package com.faridroid.english10k.view.viewmodel.factory;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -7,9 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.faridroid.english10k.viewmodel.FlashcardsSettingsViewModel;
-import com.faridroid.english10k.viewmodel.WordViewModel;
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
+import com.faridroid.english10k.view.viewmodel.FlashcardsSettingsViewModel;
+import com.faridroid.english10k.view.viewmodel.WordViewModel;
+import com.faridroid.english10k.data.dto.UserDTO;
 
 public class FlashcardsSettingsViewModelFactory implements ViewModelProvider.Factory {
 

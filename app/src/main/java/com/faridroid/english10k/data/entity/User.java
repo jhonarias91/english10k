@@ -13,8 +13,9 @@ public class User {
     private String id;
     private String username;
     private String email;
-    private long createdAt;
+    private Long createdAt;
     @ColumnInfo(name = "xp", defaultValue = "0")
+    @NotNull
     private long xp;
 
     // Getters y Setters
@@ -45,11 +46,11 @@ public class User {
         this.email = email;
     }
 
-    public long getCreatedAt() {
+    public Long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(long createdAt) {
+    public void setCreatedAt(Long createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -2,25 +2,16 @@ package com.faridroid.english10k;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.faridroid.english10k.data.entity.User;
-import com.faridroid.english10k.data.entity.Word;
-
-import java.util.List;
-
-import com.faridroid.english10k.viewmodel.UserViewModel;
-import com.faridroid.english10k.viewmodel.WordViewModel;
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
-
-import java.util.concurrent.CompletableFuture;
+import com.faridroid.english10k.view.viewmodel.UserViewModel;
+import com.faridroid.english10k.view.viewmodel.WordViewModel;
+import com.faridroid.english10k.data.dto.UserDTO;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -42,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button btnFlashCards = findViewById(R.id.btnFlashCards);
         btnFlashCards.setOnClickListener(this);
+
+        Button btnCreateCustomWords = findViewById(R.id.btnCreateCustomWords);
+        btnCreateCustomWords.setOnClickListener(this);
 
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
@@ -70,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Crear un intent para abrir la actividad de Flashcards
             Intent intent = new Intent(MainActivity.this, FlashcardsSettingsActivity.class);
             intent.putExtra("user", user);
+            startActivity(intent);
+        }else if (view.getId() == R.id.btnCreateCustomWords){
+            Intent intent = new Intent(MainActivity.this, AddWordToCustomListActivity.class);
+            intent.putExtra("userId", user.getId());
             startActivity(intent);
         }
     }

@@ -33,9 +33,27 @@
         android:elevation="4dp"
         android:padding="12dp"
         android:layout_margin="16dp"
+        android:textSize="28sp"
         app:layout_constraintTop_toBottomOf="@+id/txtXp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/btnCreateCustomWords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/btn_main_go_add_word"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:alpha="1"
+        android:elevation="4dp"
+        android:padding="12dp"
+        android:layout_margin="16dp"
+        android:textSize="28sp"
+        app:layout_constraintTop_toBottomOf="@+id/btnFlashCards"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

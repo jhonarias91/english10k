@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel;
+package com.faridroid.english10k.view.viewmodel;
 
 import android.app.Application;
 

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.faridroid.english10k.R;
 import com.faridroid.english10k.data.entity.Word;
-import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
+import com.faridroid.english10k.data.dto.UserProgressWordJoinDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +95,9 @@ public class LearnedWordsAdapter extends RecyclerView.Adapter<LearnedWordsAdapte
 
         public WordViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewWord = itemView.findViewById(R.id.textViewWord);
-            textViewTranslation = itemView.findViewById(R.id.textViewTranslation);
-            buttonUnmark = itemView.findViewById(R.id.buttonUnmark);
+            textViewWord = itemView.findViewById(R.id.textViewCustomWord);
+            textViewTranslation = itemView.findViewById(R.id.textViewTranslationCustomWord);
+            buttonUnmark = itemView.findViewById(R.id.buttonDeleteCustomWord);
         }
 
         public void bind(final UserProgressWordJoinDTO wordWithProgress, final OnLearnedWordClickListener listener) {

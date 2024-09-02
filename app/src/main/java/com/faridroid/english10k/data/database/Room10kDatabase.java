@@ -20,7 +20,7 @@ import com.faridroid.english10k.data.entity.UserCustomProgress;
 import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.entity.Word;
 
-@Database(version = 2, entities = {Word.class, Category.class, UserProgress.class, TestResult.class, User.class, CustomList.class, CustomWord.class, UserCustomProgress.class},  exportSchema = true)
+@Database(version = 5, entities = {Word.class, Category.class, UserProgress.class, TestResult.class, User.class, CustomList.class, CustomWord.class, UserCustomProgress.class},  exportSchema = true)
 public abstract class Room10kDatabase extends RoomDatabase {
     public abstract WordDao wordDao();
     public abstract CategoryDao categoryDao();

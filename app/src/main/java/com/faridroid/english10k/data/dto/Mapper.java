@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel.dto;
+package com.faridroid.english10k.data.dto;
 
 import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.entity.Word;

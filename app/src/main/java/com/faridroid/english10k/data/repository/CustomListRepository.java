@@ -32,11 +32,7 @@ public class CustomListRepository {
         return instance;
     }
 
-    public LiveData<List<CustomList>> getAllCustomLists() {
-        return dao.getAllCustomLists();
-    }
-
-    public LiveData<List<CustomList>> getCustomListsByCategory(int categoryId) {
+    public LiveData<List<CustomList>> getCustomListsByCategory(String categoryId) {
         return dao.getCustomListsByCategory(categoryId);
     }
 
@@ -48,7 +44,11 @@ public class CustomListRepository {
         executorService.execute(() -> dao.updateCustomList(customList));
     }
 
-    public void deleteCustomList(int id) {
+    public void deleteCustomList(String id) {
         executorService.execute(() -> dao.deleteCustomList(id));
+    }
+
+    public LiveData<CustomList> getListByNameAndCategoryId(String listName, String lastCategoryId) {
+        return dao.getListByNameAndCategoryId(listName, lastCategoryId);
     }
 }

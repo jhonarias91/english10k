@@ -5,9 +5,9 @@ import android.speech.tts.TextToSpeech;
 
 import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.service.UserProgressService;
-import com.faridroid.english10k.viewmodel.dto.ProgressType;
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
-import com.faridroid.english10k.viewmodel.dto.UserProgressDTO;
+import com.faridroid.english10k.data.dto.ProgressType;
+import com.faridroid.english10k.data.dto.UserDTO;
+import com.faridroid.english10k.data.dto.UserProgressDTO;
 
 import java.util.Collections;
 import java.util.HashMap;

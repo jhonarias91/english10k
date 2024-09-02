@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel.dto;
+package com.faridroid.english10k.data.dto;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

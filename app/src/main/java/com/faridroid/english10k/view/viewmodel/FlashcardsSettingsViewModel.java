@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel;
+package com.faridroid.english10k.view.viewmodel;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
+import com.faridroid.english10k.data.dto.UserDTO;
 
 public class FlashcardsSettingsViewModel extends AndroidViewModel {
 

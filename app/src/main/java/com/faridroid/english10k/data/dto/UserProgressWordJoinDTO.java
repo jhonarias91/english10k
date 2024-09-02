@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel.dto;
+package com.faridroid.english10k.data.dto;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

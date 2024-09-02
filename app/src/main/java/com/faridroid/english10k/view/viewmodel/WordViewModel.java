@@ -1,4 +1,4 @@
-package com.faridroid.english10k.viewmodel;
+package com.faridroid.english10k.view.viewmodel;
 
 import android.app.Application;
 
@@ -9,8 +9,8 @@ import androidx.lifecycle.Transformations;
 import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.data.repository.WordRepository;
 import com.faridroid.english10k.service.UserProgressService;
-import com.faridroid.english10k.viewmodel.dto.ProgressType;
-import com.faridroid.english10k.viewmodel.dto.UserProgressDTO;
+import com.faridroid.english10k.data.dto.ProgressType;
+import com.faridroid.english10k.data.dto.UserProgressDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public class WordViewModel extends AndroidViewModel {
 
     public LiveData<List<Word>> getWordsByLimit(int limit, String userId) {
         // TODO: 29/08/2024 change to limit 
-        LiveData<List<Word>> wordsByLimit = repository.getWordsByLimit(5);
+        LiveData<List<Word>> wordsByLimit = repository.getWordsByLimit(limit);
         LiveData<List<UserProgressDTO>> allUserProgress = userProgressService.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
 
         //if the word on wordsByLimit is already learned, remove it from the list

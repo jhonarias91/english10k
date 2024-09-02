@@ -12,15 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.faridroid.english10k.service.UserProgressService;
 import com.faridroid.english10k.view.adapter.LearnedWordsAdapter;
 import com.faridroid.english10k.view.adapter.OnLearnedWordClickListener;
-import com.faridroid.english10k.viewmodel.dto.ProgressType;
-import com.faridroid.english10k.viewmodel.dto.UserDTO;
-import com.faridroid.english10k.viewmodel.dto.UserProgressWordJoinDTO;
+import com.faridroid.english10k.data.dto.ProgressType;
+import com.faridroid.english10k.data.dto.UserDTO;
+import com.faridroid.english10k.data.dto.UserProgressWordJoinDTO;
 
 import java.util.List;
 
