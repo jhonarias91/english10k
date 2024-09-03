@@ -20,7 +20,6 @@ public class CategoryAdapter extends ArrayAdapter<String> implements Filterable 
     private List<CategoryDTO> originalCategories;
     private List<String> filteredCategoryNames;
     private AutoCompleteTextView autoCompleteCategory;
-    private String inputText = "";
 
     public CategoryAdapter(Context context, List<String> categoryNames, AutoCompleteTextView autoCompleteCategory) {
         super(context, android.R.layout.simple_dropdown_item_1line, categoryNames);
@@ -59,25 +58,22 @@ public class CategoryAdapter extends ArrayAdapter<String> implements Filterable 
     public Filter getFilter() {
         return new Filter() {
             @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
+            protected FilterResults performFiltering(CharSequence inputFilter) {
                 FilterResults results = new FilterResults();
                 List<String> suggestions = new ArrayList<>();
 
-                if (constraint == null || constraint.length() == 0) {
+                if (inputFilter == null || inputFilter.length() == 0) {
                     suggestions.addAll(getOriginalCategoryNames());
                 } else {
-                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    String filterPattern = inputFilter.toString().toLowerCase().trim();
                     for (CategoryDTO category : originalCategories) {
                         if (category.getName().toLowerCase().contains(filterPattern)) {
                             suggestions.add(category.getName());
                         }
                     }
                     // Si no hay coincidencias exactas, agrega el ítem "Crear [nombre]" al principio
-                    if (!suggestions.isEmpty()) {
-                        suggestions.add(0, "Crear \"" + constraint.toString() + "\"");
-                    } else {
-                        // Si no hay coincidencias, simplemente agrega el ítem de creación
-                        suggestions.add("Crear \"" + constraint.toString() + "\"");
+                    if (isNewCategory(inputFilter.toString())) {
+                        suggestions.add(0, "Crear \"" + inputFilter.toString() + "\"");
                     }
                 }
 
@@ -102,12 +98,18 @@ public class CategoryAdapter extends ArrayAdapter<String> implements Filterable 
                 }
                 return categoryNames;
             }
+
+            private boolean isNewCategory(String categoryName) {
+                for (CategoryDTO category : originalCategories) {
+                    if (category.getName().equals(categoryName.trim())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
         };
     }
 
-    public void updateInputText(String inputText) {
-        this.inputText = inputText;
-    }
 
     public void setCategories(List<CategoryDTO> categoryDTOS) {
         this.originalCategories = categoryDTOS;

@@ -27,9 +27,9 @@ public class CustomListViewModel extends AndroidViewModel {
     public void insertCustomList(CustomListDTO customListDTO) {
         customListService.insertCustomList(new CustomList(
                 customListDTO.getId(),
+                customListDTO.getCategoryId(),
                 customListDTO.getName(),
-                customListDTO.getOriginalName(),
-                customListDTO.getCategoryId()
+                customListDTO.getOriginalName()
         ));
     }
 

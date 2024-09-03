@@ -32,21 +32,6 @@
             android:layout_marginBottom="16dp"/>
 
         <!-- Selección de Lista dentro de la Categoría -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Seleccionar Lista"
-            android:textSize="16sp"
-            android:paddingBottom="8dp"/>
-
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Buscar o crear lista"
-            android:inputType="text"
-            android:completionHint="Buscar listas"
-            android:layout_marginBottom="16dp"/>
 
         <!-- Formulario para agregar palabra -->
         <TextView

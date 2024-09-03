@@ -82,7 +82,6 @@ public class UserViewModel extends AndroidViewModel {
                 isUserCreated.postValue(false);
             } else {
                 isUserCreated.postValue(true);
-                categoryService.insertDefaultCategory(userId, "Mis listas", null);
             }
         });
     }

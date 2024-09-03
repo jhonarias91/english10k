@@ -19,11 +19,14 @@ public interface CategoryDao {
     void updateCategory(Category category);
 
     @Query("SELECT * FROM categories WHERE id = :id")
-    Category getCategoryById(String id);
+    LiveData<Category> getCategoryById(String id);
 
     @Query("SELECT * FROM categories WHERE user_id = :userId")
     LiveData<List<Category>> getAllCategories(String userId);
 
     @Query("DELETE FROM categories WHERE id = :id")
     void deleteCategory(String id);
+
+    @Query("SELECT * FROM categories WHERE user_id = :userId AND name = :categoryName LIMIT 1")
+    LiveData<Category> getCategoryByName(String userId, String categoryName);
 }

@@ -57,4 +57,12 @@ public class CategoryRepository {
     public void deleteCategory(String id) {
         executorService.execute(() -> dao.deleteCategory(id));
     }
+
+    public LiveData<Category> getCategoryByName(String userId, String categoryName) {
+        return dao.getCategoryByName(userId, categoryName);
+    }
+
+    public LiveData<Category> getCategoryById(String id) {
+        return dao.getCategoryById(id);
+    }
 }

@@ -4,17 +4,20 @@ public class CustomListDTO {
 
     private String id;
 
+    private String categoryId;  // Relationship with the category
+
     private String name;  // The name that the user can modify
 
     private String originalName;  // The original name when the list is created or downloaded
 
-    private String categoryId;  // Relationship with the category
-
-    public CustomListDTO(String id, String name, String originalName, String categoryId) {
+    public CustomListDTO(String id, String categoryId, String name, String originalName) {
         this.id = id;
+        this.categoryId = categoryId;
         this.name = name;
         this.originalName = originalName;
-        this.categoryId = categoryId;
+    }
+
+    public CustomListDTO() {
     }
 
     public CustomListDTO(String name, String originalName, String categoryId) {
@@ -53,5 +56,10 @@ public class CustomListDTO {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.faridroid.english10k.view.viewmodel.CategoryViewModel;
 import com.faridroid.english10k.view.viewmodel.UserViewModel;
 import com.faridroid.english10k.view.viewmodel.WordViewModel;
 import com.faridroid.english10k.data.dto.UserDTO;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UserViewModel userViewModel;
     private TextView txtXp;
     private UserDTO user;
-
+    private CategoryViewModel categoryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
 
+        categoryViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(CategoryViewModel.class);
+
         userViewModel.checkOrCreateUser();
 
         userViewModel.getIsUserCreated().observe(this, isCreated -> {
@@ -47,11 +51,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 userViewModel.getUserDTO().observe(this, user -> {
                     if (user != null) {
                         this.user = user;
+                        categoryViewModel.setUserId(user.getId());
                         displayUserXP();
                     }
                 });
-            } else {
-                //Issue with user
             }
         });
 
@@ -66,10 +69,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra("user", user);
             startActivity(intent);
         }else if (view.getId() == R.id.btnCreateCustomWords){
-            Intent intent = new Intent(MainActivity.this, AddWordToCustomListActivity.class);
-            intent.putExtra("userId", user.getId());
-            startActivity(intent);
+            goDefaultCustomCategory();
         }
+    }
+
+    private void goDefaultCustomCategory() {
+
+        //Get the category
+        categoryViewModel.getOrCreateDefaultCategory().observe(this, categoryDTOs -> {
+            if (categoryDTOs != null) {
+                Intent intent = new Intent(MainActivity.this, AddWordToCustomListActivity.class);
+                intent.putExtra("userId", user.getId());
+                intent.putExtra("categoryId", categoryDTOs.getId());
+                startActivity(intent);
+            }
+        });
     }
 
     private void displayUserXP() {

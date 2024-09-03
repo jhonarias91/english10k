@@ -35,11 +35,11 @@ public class CustomListService {
             List<CustomListDTO> dtoList = new ArrayList<>();
             for (CustomList customList : customLists) {
                 CustomListDTO dto = new CustomListDTO(
+                        customList.getId(),
+                        customList.getCategoryId(),
                         customList.getName(),
-                        customList.getOriginalName(),
-                        customList.getCategoryId()
+                        customList.getOriginalName()
                 );
-                dto.setId(customList.getId());
                 dtoList.add(dto);
             }
             return dtoList;

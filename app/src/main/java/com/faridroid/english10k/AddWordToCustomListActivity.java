@@ -11,11 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.faridroid.english10k.data.dto.CategoryDTO;
+import com.faridroid.english10k.data.dto.CustomListDTO;
 import com.faridroid.english10k.data.dto.CustomWordDTO;
-import com.faridroid.english10k.view.adapter.CategoryAdapter;
+import com.faridroid.english10k.view.adapter.CustomListAdapter2;
 import com.faridroid.english10k.view.adapter.CustomWordAdapter;
-import com.faridroid.english10k.view.viewmodel.CategoryViewModel;
 import com.faridroid.english10k.view.viewmodel.CustomListViewModel;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class AddWordToCustomListActivity extends AppCompatActivity {
 
     private AutoCompleteTextView autoCompleteCategory;
-    private AutoCompleteTextView autoCompleteList;
     private EditText editTextWord;
     private EditText editTextTranslation;
     private Button buttonAddPair;
@@ -34,62 +32,48 @@ public class AddWordToCustomListActivity extends AppCompatActivity {
     private CustomWordAdapter customWordAdapter;
     private List<CustomWordDTO> customWordList = new ArrayList<>();
     private String userId;
-    private String lastCategoryId;
+    private String currentCategoryId;
     private String lastListId;
     private CustomListViewModel customListModel;
-    private CategoryViewModel categoryViewModel;
-    private CategoryAdapter categoryAdapter;
+    //private CustomListAdapter customListAdapter;
+    private CustomListAdapter2 customListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_word_to_custom_list);
 
-        categoryViewModel = new ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(CategoryViewModel.class);
+        // Inicializa los ViewModels
+        customListModel = new ViewModelProvider(this).get(CustomListViewModel.class);
 
+        // Enlaza los componentes de la interfaz
         autoCompleteCategory = findViewById(R.id.autoCompleteCategory);
-        autoCompleteList = findViewById(R.id.autoCompleteList);
         editTextWord = findViewById(R.id.editTextWord);
         editTextTranslation = findViewById(R.id.editTextTranslation);
         buttonAddPair = findViewById(R.id.buttonAddPair);
         recyclerViewWordPairs = findViewById(R.id.recyclerViewWordPairs);
-        customListModel = new ViewModelProvider(this).get(CustomListViewModel.class);
 
-        //Get the user id
         userId = getIntent().getStringExtra("userId");
-        // Verifica si la categoría "Mis listas" existe antes de observar
-        categoryViewModel.getAllCategories(userId).observe(this, categoryDTOS -> {
-            if (categoryDTOS == null || categoryDTOS.isEmpty()) {
-                // Si la lista está vacía, inserta la categoría "Mis listas"
-                insertDefaultCategory();
-            } else {
-                // Actualiza la vista si ya hay categorías disponibles
-                updateCategoryView(categoryDTOS);
+        currentCategoryId = getIntent().getStringExtra("categoryId");
+
+        // Observa la categoría por defecto
+        customListModel.getListsByCategoryId(currentCategoryId).observe(this, customList -> {
+            if (customList == null || customList.isEmpty()) {
+                createNewList("Mis palabras"); // Crea la categoría por defecto si no existe
             }
+            updateCustomListView(customList);
         });
 
-        autoCompleteCategory.setOnClickListener(view -> {
-            if (!autoCompleteCategory.isPopupShowing()) {
-                //autoCompleteCategory.showDropDown();
-            }
-        });
-
-
+        // Maneja el filtrado para el AutoCompleteTextView de categoría
         autoCompleteCategory.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No necesitas hacer nada aquí
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Actualiza el texto del input en el adaptador
-                categoryAdapter.updateInputText(s.toString());
-
-                // Forzar el filtrado para actualizar las sugerencias
-                if (categoryAdapter != null) {
-                    categoryAdapter.getFilter().filter(s.toString());
+                if (customListAdapter != null) {
+                    customListAdapter.getFilter().filter(s.toString());
                 }
             }
 
@@ -98,56 +82,43 @@ public class AddWordToCustomListActivity extends AppCompatActivity {
             }
         });
 
+        autoCompleteCategory.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && !autoCompleteCategory.isPopupShowing() && customListAdapter != null) {
+                customListAdapter.getFilter().filter("");
+                autoCompleteCategory.showDropDown();
+            }
+        });
 
-        autoCompleteCategory.setThreshold(0);
+        autoCompleteCategory.setThreshold(1);
 
+        // Maneja la selección de un ítem en el dropdown
         autoCompleteCategory.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedItem = categoryAdapter.getItem(position);
+            String selectedItem = customListAdapter.getItem(position);
             if (selectedItem != null && selectedItem.startsWith("Crear ")) {
-                String newCategoryName = selectedItem.replace("Crear \"", "").replace("\"", "");
-                createNewCategory(newCategoryName);
-            }
-        });
-
-        autoCompleteCategory.setOnClickListener(view -> {
-            // Fuerza el filtrado con una cadena vacía para mostrar todas las categorías
-            if (!autoCompleteCategory.isPopupShowing()) {
-                categoryAdapter.getFilter().filter(""); // Filtra con una cadena vacía para mostrar todas las categorías
-                autoCompleteCategory.showDropDown();    // Muestra el dropdown
+                String newCustomListName = selectedItem.replace("Crear \"", "").replace("\"", "");
+                autoCompleteCategory.setText(newCustomListName);
+                createNewList(newCustomListName); // Crea una nueva lista si se selecciona la opción de creación
             }
         });
     }
 
-    private void insertDefaultCategory() {
-        CategoryDTO categoryDTO = new CategoryDTO(UUID.randomUUID().toString(), userId, "Mis listas", null);
-        categoryViewModel.insertCategory(categoryDTO);
-    }
-
-    private void updateCategoryView(List<CategoryDTO> categoryDTOS) {
-        List<String> categoryNames = categoryDTOS.stream().map(categoryDTO -> categoryDTO.getName()).collect(Collectors.toList());
-
-        if (categoryAdapter == null) {
-            categoryAdapter = new CategoryAdapter(this, categoryNames, autoCompleteCategory);
-            autoCompleteCategory.setAdapter(categoryAdapter);
+    // Actualiza la vista de listas personalizadas basadas en la categoría seleccionada
+    private void updateCustomListView(List<CustomListDTO> customListDTOS) {
+        List<String> names = customListDTOS.stream().map(customListDTO -> customListDTO.getName()).collect(Collectors.toList());
+        if (customListAdapter == null) {
+            customListAdapter = new CustomListAdapter2(this, names, autoCompleteCategory);
+            autoCompleteCategory.setAdapter(customListAdapter);
         } else {
-            categoryAdapter.clear();
-            categoryAdapter.addAll(categoryNames);
-            categoryAdapter.notifyDataSetChanged();
+            customListAdapter.setCategories(customListDTOS);
         }
-        categoryAdapter.setCategories(categoryDTOS);
-
-        // Forzar la apertura del dropdown cuando se configuran las categorías
         autoCompleteCategory.post(() -> autoCompleteCategory.showDropDown());
     }
 
+    // Crea una nueva lista personalizada
+    private void createNewList(String newCustomListName) {
 
-
-    private void createNewCategory(String categoryName) {
-        CategoryDTO newCategory = new CategoryDTO(UUID.randomUUID().toString(), userId, categoryName, null);
-        categoryViewModel.insertCategory(newCategory);
-        // Actualiza la vista para reflejar la nueva categoría inmediatamente
-        List<CategoryDTO> updatedCategories = new ArrayList<>(categoryAdapter.getCategories());
-        updatedCategories.add(newCategory);
-        updateCategoryView(updatedCategories);
+         CustomListDTO newCustomList = new CustomListDTO(UUID.randomUUID().toString(), currentCategoryId, newCustomListName, null);
+        customListModel.insertCustomList(newCustomList);
+        // Actualiza la vista con la nueva lista
     }
 }

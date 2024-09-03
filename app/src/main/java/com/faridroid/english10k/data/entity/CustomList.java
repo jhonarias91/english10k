@@ -35,11 +35,11 @@ public class CustomList {
         this.categoryId = categoryId;
     }
 
-    public CustomList(@NotNull String id, String name, String originalName, String categoryId) {
+    public CustomList(@NotNull String id,  String categoryId,String name, String originalName) {
         this.id = id;
+        this.categoryId = categoryId;
         this.name = name;
         this.originalName = originalName;
-        this.categoryId = categoryId;
     }
 
     @NotNull
