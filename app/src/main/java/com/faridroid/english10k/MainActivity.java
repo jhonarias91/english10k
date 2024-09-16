@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView txtXp;
     private UserDTO user;
     private CategoryViewModel categoryViewModel;
+    private Button btnGoToPracticeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button btnFlashCards = findViewById(R.id.btnFlashCards);
         btnFlashCards.setOnClickListener(this);
-
+        btnGoToPracticeList = findViewById(R.id.btnGoToPracticeList);
+        btnGoToPracticeList.setOnClickListener(this);
         Button btnCreateCustomWords = findViewById(R.id.btnCreateCustomWords);
         btnCreateCustomWords.setOnClickListener(this);
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         this.user = user;
                         categoryViewModel.setUserId(user.getId());
                         displayUserXP();
+                        categoryViewModel.getOrCreateDefaultCategory();
                     }
                 });
             }
@@ -70,11 +73,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
         }else if (view.getId() == R.id.btnCreateCustomWords){
             goDefaultCustomCategory();
+        }else if (view.getId() == R.id.btnGoToPracticeList){
+            goToPracticeMyList();
         }
     }
 
     private void goDefaultCustomCategory() {
-
         //Get the category
         categoryViewModel.getOrCreateDefaultCategory().observe(this, categoryDTOs -> {
             if (categoryDTOs != null) {
@@ -84,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
             }
         });
+    }
+
+    private void goToPracticeMyList() {
+        Intent intent = new Intent(MainActivity.this, PracticeMyListActivity.class);
+        intent.putExtra("user", this.user);
+        startActivity(intent);
     }
 
     private void displayUserXP() {

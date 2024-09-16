@@ -2,42 +2,44 @@ package com.faridroid.english10k.data.dto;
 
 public class UserCustomProgressDTO {
 
-    private int id;
+    private String id;
 
-    private String listId;  // Relationship with the custom list
+    private String customWordId;  // Relationship with the custom list
 
     private int progress;  // User's progress in the custom list
 
     private Long lastUpdated;  // Timestamp of the last update
 
+    private ProgressType progressType; //1 -> word learned
 
-    public UserCustomProgressDTO(int id, String listId, int progress, Long lastUpdated) {
+
+    public UserCustomProgressDTO(String id, String customWordId, int progress, ProgressType progressType) {
         this.id = id;
-        this.listId = listId;
+        this.customWordId = customWordId;
         this.progress = progress;
-        this.lastUpdated = lastUpdated;
+        this.progressType = progressType;
     }
 
     public UserCustomProgressDTO(String listId, int progress, Long lastUpdated) {
-        this.listId = listId;
+        this.customWordId = listId;
         this.progress = progress;
         this.lastUpdated = lastUpdated;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getListId() {
-        return listId;
+    public String getCustomWordId() {
+        return customWordId;
     }
 
-    public void setListId(String listId) {
-        this.listId = listId;
+    public void setCustomWordId(String customWordId) {
+        this.customWordId = customWordId;
     }
 
     public int getProgress() {

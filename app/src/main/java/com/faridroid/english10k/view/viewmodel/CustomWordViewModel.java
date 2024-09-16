@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.faridroid.english10k.data.dto.CustomWordDTO;
+import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.data.entity.CustomWord;
 import com.faridroid.english10k.service.CustomWordService;
 
@@ -20,13 +21,11 @@ public class CustomWordViewModel extends AndroidViewModel {
         customWordService = CustomWordService.getInstance(application);
     }
 
-
-    public LiveData<List<CustomWordDTO>> getCustomWordsByList(String listId) {
+    public LiveData<List<WordInterface>> getCustomWordsByList(String listId) {
         return customWordService.getCustomWordsByList(listId);
     }
 
     public void insertCustomWord(CustomWordDTO customWordDTO) {
-        CustomWord customWord = mapDTOToEntity(customWordDTO);
         customWordService.insertCustomWord(customWordDTO);
     }
 

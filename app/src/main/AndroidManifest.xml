@@ -36,6 +36,10 @@
         <activity
             android:name=".LearnedWordsActivity"
             android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".PracticeMyListActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
 import com.faridroid.english10k.data.dto.CustomWordDTO;
+import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.data.entity.CustomWord;
 import com.faridroid.english10k.data.repository.CustomWordRepository;
 
@@ -28,13 +29,13 @@ public class CustomWordService {
         return instance;
     }
 
-    public LiveData<List<CustomWordDTO>> getCustomWordsByList(String listId) {
+    public LiveData<List<WordInterface>> getCustomWordsByList(String listId) {
         LiveData<List<CustomWord>> customWordsByList = customWordRepository.getCustomWordsByList(listId);
 
         return Transformations.map(customWordsByList, customWords -> {
-            List<CustomWordDTO> dtoList = new ArrayList<>();
+            List<WordInterface> dtoList = new ArrayList<>();
             for (CustomWord customWord : customWords) {
-                CustomWordDTO dto = new CustomWordDTO(
+                WordInterface dto = new CustomWordDTO(
                         customWord.getId(),
                         customWord.getListId(),
                         customWord.getWord(),

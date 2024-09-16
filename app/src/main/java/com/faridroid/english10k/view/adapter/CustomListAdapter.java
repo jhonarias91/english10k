@@ -5,12 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.faridroid.english10k.data.dto.CustomListDTO;
 
@@ -19,19 +16,20 @@ import java.util.List;
 
 public class CustomListAdapter extends ArrayAdapter<String> implements Filterable {
 
-    private List<CustomListDTO> originalList;
+    private List<CustomListDTO> originalCategories;
     private List<String> filteredCategoryNames;
-    private final AutoCompleteTextView autoCompleteCategory;
 
-    public CustomListAdapter(Context context, List<String> categoryNames, List<CustomListDTO> originalCategories, AutoCompleteTextView autoCompleteCategory) {
+
+    public CustomListAdapter(Context context, List<String> categoryNames, List<CustomListDTO> originalCategories) {
         super(context, android.R.layout.simple_dropdown_item_1line, categoryNames);
         this.filteredCategoryNames = new ArrayList<>(categoryNames);
-        this.originalList = new ArrayList<>(originalCategories);
-        this.autoCompleteCategory = autoCompleteCategory;
+        this.originalCategories = originalCategories;
+
     }
 
     @Override
     public int getCount() {
+        // Retorna el tamaño de la lista filtrada
         return filteredCategoryNames.size();
     }
 
@@ -39,6 +37,16 @@ public class CustomListAdapter extends ArrayAdapter<String> implements Filterabl
     public String getItem(int position) {
         return filteredCategoryNames.get(position);
     }
+
+    public CustomListDTO getItemByName(String name) {
+        for (CustomListDTO category : originalCategories) {
+            if (category.getName().equals(name)) {
+                return category;
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -52,7 +60,7 @@ public class CustomListAdapter extends ArrayAdapter<String> implements Filterabl
         return convertView;
     }
 
-    @NonNull
+
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -65,11 +73,12 @@ public class CustomListAdapter extends ArrayAdapter<String> implements Filterabl
                     suggestions.addAll(getOriginalCategoryNames());
                 } else {
                     String filterPattern = inputFilter.toString().toLowerCase().trim();
-                    for (CustomListDTO category : originalList) {
+                    for (CustomListDTO category : originalCategories) {
                         if (category.getName().toLowerCase().contains(filterPattern)) {
                             suggestions.add(category.getName());
                         }
                     }
+                    // Si no hay coincidencias exactas, agrega el ítem "Crear [nombre]" al principio
                     if (isNewCategory(inputFilter.toString())) {
                         suggestions.add(0, "Crear \"" + inputFilter.toString() + "\"");
                     }
@@ -87,20 +96,19 @@ public class CustomListAdapter extends ArrayAdapter<String> implements Filterabl
                     filteredCategoryNames.addAll((List<String>) results.values);
                 }
                 notifyDataSetChanged();
-                autoCompleteCategory.post(() -> autoCompleteCategory.showDropDown());
             }
 
             private List<String> getOriginalCategoryNames() {
                 List<String> categoryNames = new ArrayList<>();
-                for (CustomListDTO list : originalList) {
-                    categoryNames.add(list.getName());
+                for (CustomListDTO category : originalCategories) {
+                    categoryNames.add(category.getName());
                 }
                 return categoryNames;
             }
 
             private boolean isNewCategory(String categoryName) {
-                for (CustomListDTO list : originalList) {
-                    if (list.getName().equalsIgnoreCase(categoryName.trim())) {
+                for (CustomListDTO category : originalCategories) {
+                    if (category.getName().equals(categoryName.trim())) {
                         return false;
                     }
                 }
@@ -109,16 +117,21 @@ public class CustomListAdapter extends ArrayAdapter<String> implements Filterabl
         };
     }
 
-    public void setCategories(List<CustomListDTO> customListDTOS) {
-        this.originalList = customListDTOS;
+
+    public void setCategories(List<CustomListDTO> categoryDTOS) {
+        this.originalCategories = categoryDTOS;
         filteredCategoryNames.clear();
-        for (CustomListDTO categoryDTO : customListDTOS) {
+        for (CustomListDTO categoryDTO : categoryDTOS) {
             filteredCategoryNames.add(categoryDTO.getName());
         }
         notifyDataSetChanged();
     }
 
     public List<CustomListDTO> getCategories() {
-        return originalList;
+        return originalCategories;
+    }
+
+    public String getCustomListId(int position) {
+        return originalCategories.get(position).getId();
     }
 }

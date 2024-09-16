@@ -1,6 +1,8 @@
 package com.faridroid.english10k.data.dto;
 
-public class CustomWordDTO {
+import com.faridroid.english10k.data.dto.interfaces.WordInterface;
+
+public class CustomWordDTO implements WordInterface {
 
     private String id;
 
@@ -23,6 +25,7 @@ public class CustomWordDTO {
         this.spanish = spanish;
     }
 
+    @Override
     public String getId() {
         return id;
     }

@@ -10,15 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.faridroid.english10k.R;
-import com.faridroid.english10k.data.dto.CustomWordDTO;
+import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 
 import java.util.List;
 
 public class CustomWordAdapter extends RecyclerView.Adapter<CustomWordAdapter.CustomWordViewHolder> {
-    private List<CustomWordDTO> customWordList;
+    private List<WordInterface> customWordList;
     private OnCustomWordDeleteListener onCustomWordDeleteListener;
 
-    public CustomWordAdapter(List<CustomWordDTO> customWordList, OnCustomWordDeleteListener onCustomWordDeleteListener) {
+    public CustomWordAdapter(List<WordInterface> customWordList, OnCustomWordDeleteListener onCustomWordDeleteListener) {
         this.customWordList = customWordList;
         this.onCustomWordDeleteListener = onCustomWordDeleteListener;
     }
@@ -32,7 +32,7 @@ public class CustomWordAdapter extends RecyclerView.Adapter<CustomWordAdapter.Cu
 
     @Override
     public void onBindViewHolder(@NonNull CustomWordViewHolder holder, int position) {
-        CustomWordDTO customWordDTO = customWordList.get(position);
+        WordInterface customWordDTO = customWordList.get(position);
         holder.bind(customWordDTO);
 
         holder.deleteButton.setOnClickListener(v -> {
@@ -64,10 +64,26 @@ public class CustomWordAdapter extends RecyclerView.Adapter<CustomWordAdapter.Cu
             deleteButton = itemView.findViewById(R.id.buttonDeleteCustomWord);
         }
 
-        void bind(CustomWordDTO customWordDTO) {
+        void bind(WordInterface customWordDTO) {
             wordTextView.setText(customWordDTO.getWord());
             translationTextView.setText(customWordDTO.getSpanish());
         }
+    }
+
+    public List<WordInterface> getCustomWordList() {
+        return customWordList;
+    }
+
+    public void setCustomWordList(List<WordInterface> customWordList) {
+        this.customWordList = customWordList;
+    }
+
+    public OnCustomWordDeleteListener getOnCustomWordDeleteListener() {
+        return onCustomWordDeleteListener;
+    }
+
+    public void setOnCustomWordDeleteListener(OnCustomWordDeleteListener onCustomWordDeleteListener) {
+        this.onCustomWordDeleteListener = onCustomWordDeleteListener;
     }
 
     public interface OnCustomWordDeleteListener {

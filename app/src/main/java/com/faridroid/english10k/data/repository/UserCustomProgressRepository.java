@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData;
 import com.faridroid.english10k.data.dao.UserCustomProgressDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
 import com.faridroid.english10k.data.database.Room10kDatabase;
+import com.faridroid.english10k.data.dto.ProgressType;
+import com.faridroid.english10k.data.dto.UserCustomProgressWordJoinDTO;
 import com.faridroid.english10k.data.entity.UserCustomProgress;
 
 import java.util.List;
@@ -32,8 +34,8 @@ public class UserCustomProgressRepository {
         return instance;
     }
 
-    public LiveData<List<UserCustomProgress>> getAllUserCustomProgressByCustomWordId(String listId) {
-        return dao.getAllUserCustomProgressByCustomWordId(listId);
+    public LiveData<List<UserCustomProgress>> getAllUserCustomProgressByCustomWordId(String listId,  ProgressType progressType) {
+        return dao.getAllUserCustomProgressByCustomWordId(listId, progressType);
     }
 
     public void insertUserCustomProgress(UserCustomProgress userCustomProgress) {
@@ -46,5 +48,9 @@ public class UserCustomProgressRepository {
 
     public void deleteUserCustomProgress(String id) {
         executorService.execute(() -> dao.deleteUserCustomProgress(id));
+    }
+
+    public LiveData<List<UserCustomProgressWordJoinDTO>> listCustomUserProgressWithWordByListId( String userId, String listId,ProgressType progressType){
+            return dao.listCustomUserProgressWithWordByListId(userId,listId, progressType);
     }
 }

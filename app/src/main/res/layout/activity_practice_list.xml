@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".AddWordToCustomListActivity">
+    tools:context=".PracticeMyListActivity">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -18,50 +17,33 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seleccionar Lista"
+            android:text="Seleccionar Categoría"
             android:textSize="16sp"
-            android:paddingBottom="8dp"/>
+            android:paddingBottom="8dp" />
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteCategory"
+        <Spinner
+            android:id="@+id/categorySpinnerPractice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Buscar o crear categoría"
-            android:inputType="text"
-            android:completionHint="Buscar categorías"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
         <!-- Selección de Lista dentro de la Categoría -->
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteCustomListPractice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seleccionar lista"
+            android:inputType="text"
+            android:completionHint="Buscar listas"
+            android:layout_marginBottom="16dp" />
 
         <!-- Formulario para agregar palabra -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Agregar Par (Word, Spanish)"
-            android:textSize="16sp"
-            android:paddingBottom="8dp"/>
-
-        <EditText
-            android:id="@+id/editTextWord"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Palabra en inglés"
-            android:inputType="text"
-            android:layout_marginBottom="8dp"/>
-
-        <EditText
-            android:id="@+id/editTextTranslation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Traducción en español"
-            android:inputType="text"
-            android:layout_marginBottom="16dp"/>
 
         <Button
-            android:id="@+id/buttonPlayList"
+            android:id="@+id/buttonPlayListPractice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Agregar Palabra a la Lista"/>
+            android:text="Play" />
 
         <!-- Lista de Palabras Agregadas -->
         <TextView
@@ -70,14 +52,13 @@
             android:text="Palabras en la Lista"
             android:textSize="16sp"
             android:paddingTop="16dp"
-            android:paddingBottom="8dp"/>
+            android:paddingBottom="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewWordPairs"
+            android:id="@+id/recyclerViewWordPairsPractice"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

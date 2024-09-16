@@ -1,10 +1,12 @@
 package com.faridroid.english10k.data.dto;
 
+import com.faridroid.english10k.data.dto.interfaces.WordInterface;
+
 import org.jetbrains.annotations.NotNull;
 
-public class WordDTO {
+public class WordDTO implements WordInterface {
 
-    private int id;
+    private String id;
 
     private String word;
 
@@ -16,7 +18,7 @@ public class WordDTO {
 
 
     public WordDTO(int id, String word, String spanish, int range, Long updated) {
-        this.id = id;
+        this.id = String.valueOf(id);
         this.word = word;
         this.spanish = spanish;
         this.range = range;
@@ -24,19 +26,22 @@ public class WordDTO {
     }
 
 
-    public WordDTO(String word, String spanish) {
+    public WordDTO(int id,String word, String spanish) {
+        this.id = String.valueOf(id);
         this.word = word;
         this.spanish = spanish;
     }
 
-    public int getId() {
+    @Override
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getWord() {
         return word;
     }
@@ -45,6 +50,7 @@ public class WordDTO {
         this.word = word;
     }
 
+    @Override
     @NotNull
     public String getSpanish() {
         return spanish;

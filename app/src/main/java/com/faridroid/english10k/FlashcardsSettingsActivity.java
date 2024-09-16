@@ -22,7 +22,6 @@ import com.faridroid.english10k.view.viewmodel.factory.FlashcardsSettingsViewMod
 
 public class FlashcardsSettingsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-
     private UserDTO user;
 
     Spinner rangeSpinner;
@@ -137,7 +136,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             intent.putExtra("user", this.user);
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
-
+            intent.putExtra("origin", 1);
             flashcardsSettingsViewModel.setRange(wordsToPlay);
 
             startActivity(intent);
