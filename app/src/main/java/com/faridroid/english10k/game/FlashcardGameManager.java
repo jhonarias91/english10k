@@ -47,20 +47,21 @@ public class FlashcardGameManager {
         // Inicializar Text-to-Speech
         this.textToSpeech = textToSpeech;
         this.user = user;
+        this.origin = origin;
         userProgressService = UserProgressService.getInstance(application);
         userCustomProgressService = UserCustomProgressService.getInstance(application);
         this.currentCardPosition = 0;
     }
 
     public WordInterface getCurrentWord() {
-        if (currentCardPosition >= allPossibleWords.size()) {
+        if (currentCardPosition < 0 || currentCardPosition >= allPossibleWords.size()) {
             return null;
         }
         return allPossibleWords.get(currentCardPosition);
     }
 
     public boolean hasNextWord() {
-        return currentCardPosition < wordsToPlay;
+        return currentCardPosition < wordsToPlay && currentCardPosition >= 0;
     }
 
     public boolean hasMoreWords() {
@@ -141,8 +142,6 @@ public class FlashcardGameManager {
         if (currentCardPosition >= allPossibleWords.size()) {
             currentCardPosition = allPossibleWords.size() - 1;
         }
-
-        nextWord();
     }
 
     private void registerUserProgress(OriginEnum originEnum, WordInterface currentWord) {
@@ -174,5 +173,9 @@ public class FlashcardGameManager {
 
     public void setFrontVisible(boolean isFrontVisible) {
         cardVisibilityStates.put(currentCardPosition, isFrontVisible);
+    }
+
+    public OriginEnum getOrigin() {
+        return origin;
     }
 }

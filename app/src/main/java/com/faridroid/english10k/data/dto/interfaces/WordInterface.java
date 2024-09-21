@@ -8,4 +8,7 @@ public interface WordInterface {
 
     String getSpanish();
 
+    boolean isLearned();
+
+    void setLearned(boolean learned);
 }

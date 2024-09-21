@@ -32,7 +32,6 @@ public class WordViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<WordInterface>> getWordsByLimit(int limit, String userId) {
-        // TODO: 29/08/2024 change to limit 
         LiveData<List<WordDTO>> wordsByLimit = wordService.getWordsByLimit(limit);
         LiveData<List<UserProgressDTO>> allUserProgress = userProgressService.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
 

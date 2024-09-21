@@ -12,6 +12,8 @@ public class CustomWordDTO implements WordInterface {
 
     private String spanish;  // The translation of the word
 
+    private boolean learned;
+
     public CustomWordDTO(String listId, String word, String spanish) {
         this.listId = listId;
         this.word = word;
@@ -23,6 +25,13 @@ public class CustomWordDTO implements WordInterface {
         this.listId = listId;
         this.word = word;
         this.spanish = spanish;
+    }
+
+    public CustomWordDTO(String id, String word, String spanish, boolean isLearned) {
+        this.id = id;
+        this.word = word;
+        this.spanish = spanish;
+        this.learned = isLearned;
     }
 
     @Override
@@ -56,5 +65,15 @@ public class CustomWordDTO implements WordInterface {
 
     public void setSpanish(String spanish) {
         this.spanish = spanish;
+    }
+
+    @Override
+    public boolean isLearned() {
+        return learned;
+    }
+
+    @Override
+    public void setLearned(boolean learned) {
+        this.learned = learned;
     }
 }

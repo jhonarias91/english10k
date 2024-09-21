@@ -16,6 +16,8 @@ public class WordDTO implements WordInterface {
 
     private Long updated;
 
+    private boolean learned;
+
 
     public WordDTO(int id, String word, String spanish, int range, Long updated) {
         this.id = String.valueOf(id);
@@ -54,6 +56,16 @@ public class WordDTO implements WordInterface {
     @NotNull
     public String getSpanish() {
         return spanish;
+    }
+
+    @Override
+    public boolean isLearned() {
+        return this.learned;
+    }
+
+    @Override
+    public void setLearned(boolean learned) {
+        this.learned = learned;
     }
 
     public void setSpanish(@NotNull String spanish) {

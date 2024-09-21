@@ -22,24 +22,25 @@ import com.faridroid.english10k.data.dto.CustomListDTO;
 import com.faridroid.english10k.data.dto.UserDTO;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.view.adapter.CustomListPracticeAdapter;
-import com.faridroid.english10k.view.adapter.CustomWordAdapter;
+import com.faridroid.english10k.view.adapter.CustomWordAdapterOnPractice;
 import com.faridroid.english10k.view.viewmodel.CategoryViewModel;
 import com.faridroid.english10k.view.viewmodel.CustomListViewModel;
+import com.faridroid.english10k.view.viewmodel.CustomUserProgressViewModel;
 import com.faridroid.english10k.view.viewmodel.CustomWordViewModel;
+import com.faridroid.english10k.view.viewmodel.intf.OnLearnForgetCustomWordListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PracticeMyListActivity extends AppCompatActivity {
+public class PracticeMyListActivity extends AppCompatActivity implements OnLearnForgetCustomWordListener {
 
     private Spinner categorySpinnerPractice;
 
     private AutoCompleteTextView autoCompleteCustomList;
     private Button buttonPlayList;
     private RecyclerView recyclerViewWordPairs;
-
-    private CustomWordAdapter customWordAdapter;
+    private CustomWordAdapterOnPractice customWordAdapter;
     private List<WordInterface> customWordList = new ArrayList<>();
     private UserDTO user;
     private String currentCategoryId;
@@ -47,6 +48,7 @@ public class PracticeMyListActivity extends AppCompatActivity {
     private CustomListViewModel customListModel;
     private CategoryViewModel categoryViewModel;
     private CustomWordViewModel customWordViewModel;
+    private CustomUserProgressViewModel customUserProgressViewModel;
     private CustomListPracticeAdapter customListAdapter;
 
     @Override
@@ -58,6 +60,7 @@ public class PracticeMyListActivity extends AppCompatActivity {
         customListModel = new ViewModelProvider(this).get(CustomListViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         customWordViewModel = new ViewModelProvider(this).get(CustomWordViewModel.class);
+        customUserProgressViewModel = new ViewModelProvider(this).get(CustomUserProgressViewModel.class);
 
         // Enlaza los componentes de la interfaz
         autoCompleteCustomList = findViewById(R.id.autoCompleteCustomListPractice);
@@ -163,12 +166,12 @@ public class PracticeMyListActivity extends AppCompatActivity {
             CustomListDTO itemByName = customListAdapter.getItemByName(selectedItem);
             if (itemByName != null) {
                 this.currentListId = itemByName.getId();
-                customWordViewModel.getCustomWordsByList(currentListId).observe(this, customWords -> {
+                customWordViewModel.getAllWordsWithLearnedMark(this.user.getId(), currentListId).observe(this, customWords -> {
                     if (customWords != null) {
                         customWordList.clear();  // Limpia la lista existente
                         customWordList.addAll(customWords);  // Añade las nuevas palabras
                         if (customWordAdapter == null) {
-                            customWordAdapter = new CustomWordAdapter(customWordList, null);
+                            customWordAdapter = new CustomWordAdapterOnPractice(customWordList, this);
                             recyclerViewWordPairs.setAdapter(customWordAdapter);
                         } else {
                             customWordAdapter.notifyDataSetChanged();  // Notifica los cambios al adaptador
@@ -192,5 +195,15 @@ public class PracticeMyListActivity extends AppCompatActivity {
             startActivity(intent);
 
         });
+    }
+
+    @Override
+    public void onForgetCustomWord(String wordId) {
+        customUserProgressViewModel.deleteLearnedCustomUserProgressByWordId(wordId);
+    }
+
+    @Override
+    public void onLearnCustomWord(String wordId) {
+        customUserProgressViewModel.insertCustomUserProgress(wordId);
     }
 }

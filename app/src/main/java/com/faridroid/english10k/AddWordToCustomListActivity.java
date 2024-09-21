@@ -118,7 +118,7 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
                 CustomListDTO itemByName = customListAdapter.getItemByName(selectedItem);
                 if (itemByName != null) {
                     this.currentListId = itemByName.getId();
-                    customWordViewModel.getCustomWordsByList(currentListId).observe(this, customWords -> {
+                    customWordViewModel.getAllWordsWithLearnedMark(this.userId, currentListId).observe(this, customWords -> {
                         if (customWords != null) {
                             customWordList.clear();  // Limpia la lista existente
                             customWordList.addAll(customWords);  // Añade las nuevas palabras

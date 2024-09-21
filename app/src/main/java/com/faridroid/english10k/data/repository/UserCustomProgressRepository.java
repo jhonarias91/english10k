@@ -34,8 +34,8 @@ public class UserCustomProgressRepository {
         return instance;
     }
 
-    public LiveData<List<UserCustomProgress>> getAllUserCustomProgressByCustomWordId(String listId,  ProgressType progressType) {
-        return dao.getAllUserCustomProgressByCustomWordId(listId, progressType);
+    public LiveData<List<UserCustomProgress>> getUserCustomProgressByListIdAndProgressType(String listId,  ProgressType progressType) {
+        return dao.getUserCustomProgressByListIdAndProgressType(listId, progressType);
     }
 
     public void insertUserCustomProgress(UserCustomProgress userCustomProgress) {
@@ -50,7 +50,11 @@ public class UserCustomProgressRepository {
         executorService.execute(() -> dao.deleteUserCustomProgress(id));
     }
 
-    public LiveData<List<UserCustomProgressWordJoinDTO>> listCustomUserProgressWithWordByListId( String userId, String listId,ProgressType progressType){
-            return dao.listCustomUserProgressWithWordByListId(userId,listId, progressType);
+    public LiveData<List<UserCustomProgressWordJoinDTO>> listCustomUserProgressWithWordByListId(String listId,ProgressType progressType){
+            return dao.listCustomUserProgressWithWordByListId(listId, progressType);
+    }
+
+    public void deleteUserCustomProgressByWordIdAndProgressType(String wordId, ProgressType progressType) {
+        executorService.execute(() -> dao.deleteUserCustomProgressByWordIdAndProgressType(wordId, progressType));
     }
 }

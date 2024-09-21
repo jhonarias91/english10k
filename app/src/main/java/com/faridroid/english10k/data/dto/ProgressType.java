@@ -15,4 +15,15 @@ public enum ProgressType {
     public int getValue() {
         return value;
     }
+
+
+    public static ProgressType fromValue(int value) {
+        for (ProgressType type : ProgressType.values()) {
+            if (type.getValue() == value) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown ProgressType value: " + value);
+    }
+
 }

@@ -34,8 +34,8 @@ public class UserCustomProgressService {
         userCustomProgressRepository.deleteUserCustomProgress(id);
     }
 
-    public LiveData<List<UserCustomProgressDTO>> getAllUserProgressByType(String userId , ProgressType progressType) {
-        LiveData<List<UserCustomProgress>> allUserProgress = userCustomProgressRepository.getAllUserCustomProgressByCustomWordId(userId, progressType);
+    public LiveData<List<UserCustomProgressDTO>> getUserCustomProgressByListIdAndProgressType(String userId , ProgressType progressType) {
+        LiveData<List<UserCustomProgress>> allUserProgress = userCustomProgressRepository.getUserCustomProgressByListIdAndProgressType(userId, progressType);
 
         return Transformations.map(allUserProgress, userProgressList -> {
             List<UserCustomProgressDTO> dtoList = new ArrayList<>();
@@ -63,8 +63,11 @@ public class UserCustomProgressService {
         userCustomProgressRepository.insertUserCustomProgress(userProgressEntity);
     }
 
-    public LiveData<List<UserCustomProgressWordJoinDTO>> listCustomUserProgressWithWordByListId(String userId,String listId, ProgressType progressType) {
-        return  userCustomProgressRepository.listCustomUserProgressWithWordByListId(listId, userId,progressType);
+    public LiveData<List<UserCustomProgressWordJoinDTO>> listCustomUserProgressWithWordByListId(String listId, ProgressType progressType) {
+        return  userCustomProgressRepository.listCustomUserProgressWithWordByListId(listId,progressType);
     }
 
+    public void deleteUserCustomProgressByWordIdAndProgressType(String wordId, ProgressType progressType) {
+        userCustomProgressRepository.deleteUserCustomProgressByWordIdAndProgressType(wordId, progressType);
+    }
 }

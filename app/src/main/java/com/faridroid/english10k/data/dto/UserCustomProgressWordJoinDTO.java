@@ -1,20 +1,16 @@
 package com.faridroid.english10k.data.dto;
 
 import androidx.room.Embedded;
-import androidx.room.Relation;
 
 import com.faridroid.english10k.data.entity.CustomWord;
 import com.faridroid.english10k.data.entity.UserCustomProgress;
 
 public class UserCustomProgressWordJoinDTO {
 
-    @Embedded
+    @Embedded(prefix = "up_")
     private UserCustomProgress userProgress;
 
-    @Relation(
-            parentColumn = "custom_word_id",  // El nombre de la columna en UserProgress que referencia Word
-            entityColumn = "id"   // La clave primaria en Word
-    )
+    @Embedded(prefix = "cw_")
     private CustomWord word;
 
     public UserCustomProgress getUserProgress() {

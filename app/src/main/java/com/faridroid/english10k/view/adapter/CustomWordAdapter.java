@@ -57,11 +57,13 @@ public class CustomWordAdapter extends RecyclerView.Adapter<CustomWordAdapter.Cu
         TextView translationTextView;
         Button deleteButton;
 
+
         CustomWordViewHolder(View itemView) {
             super(itemView);
             wordTextView = itemView.findViewById(R.id.textViewCustomWord);
             translationTextView = itemView.findViewById(R.id.textViewTranslationCustomWord);
             deleteButton = itemView.findViewById(R.id.buttonDeleteCustomWord);
+
         }
 
         void bind(WordInterface customWordDTO) {

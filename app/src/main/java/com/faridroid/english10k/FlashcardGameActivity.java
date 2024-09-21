@@ -130,13 +130,13 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
             customListId = getIntent().getStringExtra("customListId");
 
-            customWordViewModel.getCustomWordsByList(customListId).observe(this, words -> {
-
-                if (words == null || words.isEmpty()) {
-                    showEndGameDialog(2);
-                    return;                }
+            customWordViewModel.getNonLearnedCustomWordsByList(this.user.getId(), customListId).observe(this, words -> {
                 if (gameManager == null) {
                     gameManager = new FlashcardGameManager(words.size(), words.size(), words, textToSpeech, this.user,originEnum, getApplication());
+                }
+                if (words == null || words.isEmpty()) {
+                    showEndGameDialog(2);
+                    return;
                 }
                 startGame();
             });
@@ -172,7 +172,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         flashcardView = getLayoutInflater().inflate(R.layout.flashcard_item, frameCardLayoutContainer, false);
         frameCardLayoutContainer.addView(flashcardView);
         WordInterface currentWord = gameManager.getCurrentWord();
-        scoreLearnedWord = 0;
+
         if (currentWord == null){
                 showEndGameDialog(2);
         }else{
@@ -299,26 +299,26 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         showFlashcard(gameManager.getCurrentWord());
     }
 
+
     public void onSwipeLeftNextWord() {
         if (isOnPause) {
             return;
         }
-        gameManager.nextWord();
+        // Verificar si hay una palabra siguiente antes de avanzar
         if (gameManager.hasNextWord()) {
-            if (gameManager.hasMoreWords()){
-                WordInterface currentWord = gameManager.getCurrentWord();
-                if (currentWord == null) {
-                    showEndGameDialog(2);
-                }else{
-                        showFlashcard(currentWord);
-                    }
-            }else{
-                showEndGameDialog(2);
+            gameManager.nextWord();
+            WordInterface currentWord = gameManager.getCurrentWord();
+            if (currentWord != null) {
+                showFlashcard(currentWord);
+            } else {
+                showEndGameDialog(1);
             }
         } else {
+            // No hay más palabras disponibles
             showEndGameDialog(1);
         }
     }
+
 
     private void showEndGameDialog(int type) {
         if (isOnPause) {
@@ -328,15 +328,15 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
         String title = "";
         String body = "";
-        int total = gameManager.getScore() + scoreLearnedWord;
+        int total = gameManager.getScore() + this.scoreLearnedWord;
         switch (type){
             case 1:
                 title = "Juego Terminado";
-                body = "Tu puntaje es: " +total;
+                body = "Tu puntaje es: " + total;
                 break;
             case 2:
-                title = "¡Vocabulario completo!";
-                body = "Desmarca las aprendidas para volver a jugar.";
+                title = "¡Vocabulario completo! puntaje: "+ total;
+                body = "Desmarca las aprendidas para volver a jugar";
                 break;
         }
         // create end game dialog
@@ -344,31 +344,33 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         builder.setTitle(title);
         builder.setMessage(body);
 
-        // Botón para volver a jugar
-        builder.setPositiveButton("Volver a jugar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (gameManager.getScore() > 0 || scoreLearnedWord > 0) {
-                    int totalXp = gameManager.getScore() + scoreLearnedWord;
-                    userViewModel.updateXp(user.getId(), user.getXp() + totalXp);
-                    user.setXp(user.getXp() + totalXp);
-                    scoreLearnedWord = 0;
-                }
-
-                //Fade Out
-                View rootView = findViewById(android.R.id.content);
-                rootView.animate().alpha(0f).setDuration(200).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Animación de Fade In
-                        rootView.animate().alpha(1f).setDuration(300).start();
-                        gameManager.resetGame();
-                        isOnPause = false;
-                        showFlashcard(gameManager.getCurrentWord());
+        // Just in case more words availables
+        if (type != 2){
+            builder.setPositiveButton("Volver a jugar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (gameManager.getScore() > 0 || scoreLearnedWord > 0) {
+                        int totalXp = gameManager.getScore() + scoreLearnedWord;
+                        userViewModel.updateXp(user.getId(), user.getXp() + totalXp);
+                        user.setXp(user.getXp() + totalXp);
+                        scoreLearnedWord = 0;
                     }
-                }).start();
-            }
-        });
+
+                    //Fade Out
+                    View rootView = findViewById(android.R.id.content);
+                    rootView.animate().alpha(0f).setDuration(200).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Animación de Fade In
+                            rootView.animate().alpha(1f).setDuration(300).start();
+                            gameManager.resetGame();
+                            isOnPause = false;
+                            showFlashcard(gameManager.getCurrentWord());
+                        }
+                    }).start();
+                }
+            });
+        }
 
         // Botón para salir al menú de configuraciones
         builder.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
@@ -377,11 +379,18 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 if (gameManager.getScore() > 0) {
                     userViewModel.updateXp(user.getId(), user.getXp() + gameManager.getScore() - scoreLearnedWord);
                 }
-                // Ir a la actividad de configuraciones
-                Intent intent = new Intent(FlashcardGameActivity.this, FlashcardsSettingsActivity.class);
-                intent.putExtra("user", user);
-                startActivity(intent);
-                finish();
+                if (gameManager.getOrigin() == OriginEnum.ENGLISH10K){
+                    Intent intent = new Intent(FlashcardGameActivity.this, FlashcardsSettingsActivity.class);
+                    intent.putExtra("user", user);
+                    startActivity(intent);
+                    finish();
+                }else if (gameManager.getOrigin() == OriginEnum.CUSTOM_WORDS){
+                    Intent intent = new Intent(FlashcardGameActivity.this, PracticeMyListActivity.class);
+                    intent.putExtra("user", user);
+                    startActivity(intent);
+                    finish();
+                }
+
             }
         });
 
