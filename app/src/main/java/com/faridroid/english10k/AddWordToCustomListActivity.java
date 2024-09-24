@@ -1,9 +1,12 @@
 package com.faridroid.english10k;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,6 +49,7 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
     private CustomListViewModel customListModel;
     private CustomWordViewModel customWordViewModel;
     private CustomListAdapter customListAdapter;
+    private Button buttonDeleteList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +70,9 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
         //linearLayout to show the list of words
         recyclerViewWordPairs.setLayoutManager(new GridLayoutManager(this, 2));
 
-
         userId = getIntent().getStringExtra("userId");
         currentCategoryId = getIntent().getStringExtra("categoryId");
+        buttonDeleteList = findViewById(R.id.buttonDeleteList);
 
         // Observa la categoría por defecto
         customListModel.getListsByCategoryId(currentCategoryId).observe(this, customList -> {
@@ -118,6 +122,7 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
                 CustomListDTO itemByName = customListAdapter.getItemByName(selectedItem);
                 if (itemByName != null) {
                     this.currentListId = itemByName.getId();
+
                     customWordViewModel.getAllWordsWithLearnedMark(this.userId, currentListId).observe(this, customWords -> {
                         if (customWords != null) {
                             customWordList.clear();  // Limpia la lista existente
@@ -129,7 +134,27 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
                                 customWordAdapter.notifyDataSetChanged();  // Notifica los cambios al adaptador
                             }
                         }
+
                     });
+                    // Configura el botón de eliminar lista
+                    buttonDeleteList.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlertDialog.Builder(AddWordToCustomListActivity.this)
+                                    .setTitle("Eliminar Lista")
+                                    .setMessage("¿Seguro de que deseas eliminar esta lista y sus palabras?")
+                                    .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // Llama al ViewModel para eliminar la lista
+                                            customListModel.deleteCustomList(currentListId);
+                                            Toast.makeText(AddWordToCustomListActivity.this, "Lista eliminada", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .setNegativeButton("No", null)
+                                    .show();
+                        }
+                    });
+
                 }
             }
         });

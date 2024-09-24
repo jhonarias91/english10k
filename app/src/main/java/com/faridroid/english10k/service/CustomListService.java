@@ -55,8 +55,8 @@ public class CustomListService {
         customListRepository.updateCustomList(customList);
     }
 
-    public void deleteCustomList(String id) {
-        customListRepository.deleteCustomList(id);
+    public void deleteCustomList(String listId) {
+        customListRepository.deleteCustomList(listId);
     }
 
     public void insertDefaultCustomList(String name, String originalName, String categoryId) {
@@ -64,8 +64,8 @@ public class CustomListService {
         customListRepository.insertCustomList(customList);
     }
 
-    public LiveData<CustomListDTO> getListByNameAndCategoryId(String listName, String lastCategoryId) {
-        LiveData<CustomList> listByNameAndCategoryId = customListRepository.getListByNameAndCategoryId(listName, lastCategoryId);
+    public LiveData<CustomListDTO> getListByNameAndCategoryId( String lastCategoryId, String listName) {
+        LiveData<CustomList> listByNameAndCategoryId = customListRepository.getListByNameAndCategoryId(lastCategoryId, listName);
 
         return Transformations.map(listByNameAndCategoryId, customList -> {
             if (customList != null) {
@@ -79,4 +79,5 @@ public class CustomListService {
             return null;
         });
     }
+
 }

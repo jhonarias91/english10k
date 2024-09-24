@@ -96,4 +96,8 @@ public class CustomWordViewModel extends AndroidViewModel {
                 )
         );
     }
+
+    public void deleteCustomList(String currentListId) {
+        customWordService.deleteCustomList(currentListId);
+    }
 }

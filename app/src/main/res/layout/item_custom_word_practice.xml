@@ -55,11 +55,11 @@
                 android:id="@+id/statusTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No Aprendida"
+                android:text="Aprendida?"
                 android:layout_gravity="center_vertical"
                 android:textColor="@android:color/black" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchLearned"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

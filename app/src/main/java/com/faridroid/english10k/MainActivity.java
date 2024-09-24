@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UserDTO user;
     private CategoryViewModel categoryViewModel;
     private Button btnGoToPracticeList;
+    private Button btnCreateMassiveList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnGoToPracticeList.setOnClickListener(this);
         Button btnCreateCustomWords = findViewById(R.id.btnCreateCustomWords);
         btnCreateCustomWords.setOnClickListener(this);
+        btnCreateMassiveList = findViewById(R.id.btnCreateMassiveList);
+        btnCreateMassiveList.setOnClickListener(this);
 
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
@@ -75,7 +78,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             goDefaultCustomCategory();
         }else if (view.getId() == R.id.btnGoToPracticeList){
             goToPracticeMyList();
+        } else if (view.getId() == R.id.btnCreateMassiveList) {
+           goToCreateMassiveList();
         }
+    }
+
+    private void goToCreateMassiveList() {
+        Intent intent = new Intent(MainActivity.this, ImportCustomListActivity.class);
+        startActivity(intent);
     }
 
     private void goDefaultCustomCategory() {

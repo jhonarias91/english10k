@@ -9,5 +9,6 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="btn_main_go_add_word">Mis listas</string>
+    <string name="input_main_create_massive_list">Crear lista masiva</string>
     <string name="btn_main_go_pratice_my_list">Practicar listas</string>
 </resources>

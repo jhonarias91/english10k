@@ -48,7 +48,9 @@ public class CustomListRepository {
         executorService.execute(() -> dao.deleteCustomList(id));
     }
 
-    public LiveData<CustomList> getListByNameAndCategoryId(String listName, String lastCategoryId) {
-        return dao.getListByNameAndCategoryId(listName, lastCategoryId);
+    public LiveData<CustomList> getListByNameAndCategoryId(String lastCategoryId, String listName) {
+        return dao.getListByNameAndCategoryId(lastCategoryId, listName);
     }
+
+
 }

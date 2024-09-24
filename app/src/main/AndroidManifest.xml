@@ -40,6 +40,15 @@
         <activity
             android:name=".PracticeMyListActivity"
             android:theme="@style/AppTheme" />
+
+        <activity android:name=".ImportCustomListActivity"  android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

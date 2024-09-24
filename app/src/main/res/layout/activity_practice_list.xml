@@ -37,6 +37,15 @@
             android:completionHint="Buscar listas"
             android:layout_marginBottom="16dp" />
 
+        <!-- New SwitchCompat to show just non learned words -->
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchCompatLearned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Solo no aprendidas"
+            android:layout_marginBottom="16dp" />
+
+
         <!-- Formulario para agregar palabra -->
 
         <Button
@@ -47,6 +56,7 @@
 
         <!-- Lista de Palabras Agregadas -->
         <TextView
+            android:id="@+id/textViewWordPairsPractice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Palabras en la Lista"

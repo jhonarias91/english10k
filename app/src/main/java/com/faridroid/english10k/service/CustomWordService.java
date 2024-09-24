@@ -70,4 +70,8 @@ public class CustomWordService {
     public void deleteCustomWord(String id) {
         customWordRepository.deleteCustomWord(id);
     }
+
+    public void deleteCustomList(String currentListId) {
+        customWordRepository.deleteCustomList(currentListId);
+    }
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Título de la pantalla -->
+    <TextView
+        android:id="@+id/tv_import_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nueva lista de palabras"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
+
+    <!-- Campo para ingresar el nombre de la lista -->
+    <TextView
+        android:id="@+id/tv_list_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre de la lista:"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/et_list_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ingrese el nombre de la lista"
+        android:inputType="text"
+        android:padding="8dp" />
+
+    <!-- Instrucción para pegar o editar el contenido compartido -->
+    <TextView
+        android:id="@+id/tv_shared_content_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Palabras (formato: word,spanish):"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <!-- Campo para pegar o editar el contenido CSV -->
+    <EditText
+        android:id="@+id/et_shared_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="word,spanish"
+        android:background="@android:color/darker_gray"
+        android:textColor="@android:color/white"
+        android:padding="8dp"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="16dp"
+        android:overScrollMode="always" />
+
+    <!-- Botón para confirmar la creación de la lista -->
+    <Button
+        android:id="@+id/btn_create_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear Lista"
+        android:textAllCaps="false"
+        android:padding="12dp"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

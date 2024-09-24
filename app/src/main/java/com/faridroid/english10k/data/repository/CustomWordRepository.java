@@ -47,4 +47,8 @@ public class CustomWordRepository {
     public void deleteCustomWord(String id) {
         executorService.execute(() -> dao.deleteCustomWord(id));
     }
+
+    public void deleteCustomList(String currentListId) {
+        executorService.execute(() -> dao.deleteCustomList(currentListId));
+    }
 }

@@ -30,5 +30,5 @@ public interface CustomListDao {
     void deleteCustomList(String id);
 
     @Query("SELECT * FROM custom_lists WHERE name = :listName AND category_id = :lastCategoryId")
-    LiveData<CustomList> getListByNameAndCategoryId(String listName, String lastCategoryId);
+    LiveData<CustomList> getListByNameAndCategoryId(String lastCategoryId, String listName);
 }

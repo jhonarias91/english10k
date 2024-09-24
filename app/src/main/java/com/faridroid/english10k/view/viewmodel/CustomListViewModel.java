@@ -43,12 +43,12 @@ public class CustomListViewModel extends AndroidViewModel {
         customListService.updateCustomList(category);
     }
 
-    public void delete(String categoryId) {
-        customListService.deleteCustomList(categoryId);
+    public void deleteCustomList(String listId) {
+        customListService.deleteCustomList(listId);
     }
 
-    public LiveData<CustomListDTO> getListByNameAndCategoryId(String listName, String lastCategoryId) {
-        return customListService.getListByNameAndCategoryId(listName, lastCategoryId);
+    public LiveData<CustomListDTO> getCustomListByCategoryIdAndName(String lastCategoryId, String listName) {
+        return customListService.getListByNameAndCategoryId(lastCategoryId,listName);
     }
 
 }

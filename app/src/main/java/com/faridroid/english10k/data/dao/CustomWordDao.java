@@ -32,4 +32,7 @@ public interface CustomWordDao {
 
     @Query("DELETE FROM custom_words WHERE id = :id")
     void deleteCustomWord(String id);
+
+    @Query("DELETE FROM custom_words WHERE list_id = :currentListId")
+    void deleteCustomList(String currentListId);
 }

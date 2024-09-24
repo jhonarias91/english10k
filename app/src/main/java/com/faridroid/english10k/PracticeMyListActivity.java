@@ -10,9 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.faridroid.english10k.data.dto.UserDTO;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.view.adapter.CustomListPracticeAdapter;
 import com.faridroid.english10k.view.adapter.CustomWordAdapterOnPractice;
+import com.faridroid.english10k.view.adapter.OnLearnedWordClickListener;
 import com.faridroid.english10k.view.viewmodel.CategoryViewModel;
 import com.faridroid.english10k.view.viewmodel.CustomListViewModel;
 import com.faridroid.english10k.view.viewmodel.CustomUserProgressViewModel;
@@ -33,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PracticeMyListActivity extends AppCompatActivity implements OnLearnForgetCustomWordListener {
+public class PracticeMyListActivity extends AppCompatActivity implements OnLearnForgetCustomWordListener, OnLearnedWordClickListener {
 
     private Spinner categorySpinnerPractice;
 
@@ -50,6 +53,8 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
     private CustomWordViewModel customWordViewModel;
     private CustomUserProgressViewModel customUserProgressViewModel;
     private CustomListPracticeAdapter customListAdapter;
+    private SwitchCompat switchCompatLearned;
+    private TextView textViewWordPairsPractice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,8 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
         recyclerViewWordPairs = findViewById(R.id.recyclerViewWordPairsPractice);
         categorySpinnerPractice = findViewById(R.id.categorySpinnerPractice);
         recyclerViewWordPairs.setLayoutManager(new GridLayoutManager(this, 2));
+        switchCompatLearned = findViewById(R.id.switchCompatLearned);
+        textViewWordPairsPractice = findViewById(R.id.textViewWordPairsPractice);
 
         this.user = (UserDTO) getIntent().getSerializableExtra("user");
 
@@ -113,6 +120,11 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
         });
         autoCompleteCustomList.setThreshold(0); //todo: check this or change to 1
         setBtnPlayGame();
+
+        // Configura el Switch para filtrar
+        switchCompatLearned.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            customWordAdapter.setShowOnlyNotLearned(isChecked);
+        });
     }
 
     private void showCategorySelection(List<CategoryDTO> categories) {
@@ -147,7 +159,9 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
     }
 
     private void updateCustomListView(List<CustomListDTO> customListDTOS) {
+
         List<String> names = customListDTOS.stream().map(CustomListDTO::getName).collect(Collectors.toList());
+
         if (customListAdapter == null) {
             customListAdapter = new CustomListPracticeAdapter(this, names, customListDTOS);
             autoCompleteCustomList.setAdapter(customListAdapter);
@@ -171,7 +185,8 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
                         customWordList.clear();  // Limpia la lista existente
                         customWordList.addAll(customWords);  // Añade las nuevas palabras
                         if (customWordAdapter == null) {
-                            customWordAdapter = new CustomWordAdapterOnPractice(customWordList, this);
+                            customWordAdapter = new CustomWordAdapterOnPractice(customWordList, this, this);
+
                             recyclerViewWordPairs.setAdapter(customWordAdapter);
                         } else {
                             customWordAdapter.notifyDataSetChanged();  // Notifica los cambios al adaptador
@@ -196,6 +211,22 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
 
         });
     }
+
+    @Override
+    public void onUnmarkClick(int userProgressId) {
+        //nothing
+    }
+
+    @Override
+    public void onFilterResults(int count) {
+        updateWordsCounter(count);
+    }
+
+    private void updateWordsCounter(int size) {
+        String totalWordsTxt = size == 0 ? "Nada por acá" : size == 1 ? "Una palabra ": String.valueOf(size)+ " palabras";
+        textViewWordPairsPractice.setText(totalWordsTxt);
+    }
+
 
     @Override
     public void onForgetCustomWord(String wordId) {

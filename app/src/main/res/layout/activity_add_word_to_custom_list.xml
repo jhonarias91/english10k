@@ -22,16 +22,28 @@
             android:textSize="16sp"
             android:paddingBottom="8dp"/>
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteCategory"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Buscar o crear categoría"
-            android:inputType="text"
-            android:completionHint="Buscar categorías"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
 
-        <!-- Selección de Lista dentro de la Categoría -->
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteCategory"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Buscar o crear categoría"
+                android:inputType="text"
+                android:completionHint="Buscar categorías"/>
+
+            <Button
+                android:id="@+id/buttonDeleteList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Eliminar"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
 
         <!-- Formulario para agregar palabra -->
         <TextView
@@ -78,6 +90,5 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,25 +4,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.faridroid.english10k.R;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.view.viewmodel.intf.OnLearnForgetCustomWordListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomWordAdapterOnPractice extends RecyclerView.Adapter<CustomWordAdapterOnPractice.CustomWordViewHolder> {
-    private List<WordInterface> customWordList;
+    private List<WordInterface> fullWordList;      // Lista completa
+    private List<WordInterface> filteredList;      // Lista filtrada
     private OnLearnForgetCustomWordListener onLearnForgetCustomWordListener;
+    private OnLearnedWordClickListener listener;
 
-    public CustomWordAdapterOnPractice(List<WordInterface> customWordList, OnLearnForgetCustomWordListener onLearnForgetCustomWordListener) {
-        this.customWordList = customWordList;
+    // Bandera para controlar si mostrar solo palabras no aprendidas
+    private boolean showOnlyNotLearned = false;
+
+    public CustomWordAdapterOnPractice(List<WordInterface> customWordList,
+                                       OnLearnForgetCustomWordListener onLearnForgetCustomWordListener,
+                                       OnLearnedWordClickListener listener) {
+        this.fullWordList = new ArrayList<>(customWordList); // Copia completa
+        this.filteredList = new ArrayList<>(customWordList); // Copia para mostrar
         this.onLearnForgetCustomWordListener = onLearnForgetCustomWordListener;
+        this.listener = listener;
     }
 
     @NonNull
@@ -34,39 +44,72 @@ public class CustomWordAdapterOnPractice extends RecyclerView.Adapter<CustomWord
 
     @Override
     public void onBindViewHolder(@NonNull CustomWordViewHolder holder, int position) {
-        WordInterface customWordDTO = customWordList.get(position);
+        WordInterface customWordDTO = filteredList.get(position);
         holder.bind(customWordDTO);
-
-        holder.switchLearned.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                if (onLearnForgetCustomWordListener != null) {
-                    onLearnForgetCustomWordListener.onLearnCustomWord(customWordDTO.getId());
-                }
-            } else {
-                if (onLearnForgetCustomWordListener != null) {
-                    onLearnForgetCustomWordListener.onForgetCustomWord(customWordDTO.getId());
-                }
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
-        return customWordList.size();
+        return filteredList.size();
     }
 
+    /**
+     * Método para eliminar una palabra de la lista.
+     * @param position Posición en la lista filtrada.
+     */
     public void removeWord(int position) {
-        customWordList.remove(position);
+        WordInterface wordToRemove = filteredList.get(position);
+        fullWordList.remove(wordToRemove);
+        filteredList.remove(position);
         notifyItemRemoved(position);
     }
 
+    /**
+     * Método para establecer el filtro basado en el estado booleano.
+     * @param showOnlyNotLearned Si es true, muestra solo palabras no aprendidas.
+     */
+    public void setShowOnlyNotLearned(boolean showOnlyNotLearned) {
+        this.showOnlyNotLearned = showOnlyNotLearned;
+        applyFilter();
+    }
+
+    /**
+     * Aplica el filtro basado en la bandera `showOnlyNotLearned`.
+     */
+    private void applyFilter() {
+        if (showOnlyNotLearned) {
+            // Filtra solo palabras que no han sido aprendidas
+            filteredList = new ArrayList<>();
+            for (WordInterface word : fullWordList) {
+                if (!word.isLearned()) {
+                    filteredList.add(word);
+                }
+            }
+        } else {
+            // Muestra todas las palabras
+            filteredList = new ArrayList<>(fullWordList);
+        }
+        notifyDataSetChanged();
+        listener.onFilterResults(filteredList.size());
+    }
+
+    /**
+     * Método para actualizar la lista completa de palabras.
+     * @param customWordList Nueva lista de palabras.
+     */
+    public void setCustomWordList(List<WordInterface> customWordList) {
+        this.fullWordList = new ArrayList<>(customWordList);
+        applyFilter(); // Reaplica el filtro con la nueva lista
+    }
+
+    /**
+     * ViewHolder para cada elemento de la lista.
+     */
     class CustomWordViewHolder extends RecyclerView.ViewHolder {
         TextView wordTextView;
         TextView translationTextView;
         Button deleteButton;
-        TextView statusTextView;
-        Switch switchLearned;
-
+        SwitchCompat switchLearned;
 
         CustomWordViewHolder(View itemView) {
             super(itemView);
@@ -74,41 +117,53 @@ public class CustomWordAdapterOnPractice extends RecyclerView.Adapter<CustomWord
             translationTextView = itemView.findViewById(R.id.textViewTranslationCustomWord);
             deleteButton = itemView.findViewById(R.id.buttonLearnForget);
             switchLearned = itemView.findViewById(R.id.switchLearned);
-            statusTextView = itemView.findViewById(R.id.statusTextView);
         }
 
         void bind(WordInterface customWord) {
             wordTextView.setText(customWord.getWord());
             translationTextView.setText(customWord.getSpanish());
-            if (customWord.isLearned()) {
-                statusTextView.setText("Aprendida");
-                switchLearned.setChecked(true);
-            } else {
-                statusTextView.setText("Por aprender");
-                switchLearned.setChecked(false);
-            }
 
-            // Listener para cambiar el estado
+            // Elimina el listener antes de cambiar el estado del switch para evitar llamadas no deseadas
+            switchLearned.setOnCheckedChangeListener(null);
+            switchLearned.setChecked(customWord.isLearned());
+
+            // Agrega nuevamente el listener
             switchLearned.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    statusTextView.setText("Aprendida");
-                    customWord.setLearned(true);  // Actualizar el estado de la palabra en tu modelo de datos
+                    customWord.setLearned(true);
+                    if (onLearnForgetCustomWordListener != null) {
+                        onLearnForgetCustomWordListener.onLearnCustomWord(customWord.getId());
+                    }
                 } else {
-                    statusTextView.setText("No Aprendida");
                     customWord.setLearned(false);
+                    if (onLearnForgetCustomWordListener != null) {
+                        onLearnForgetCustomWordListener.onForgetCustomWord(customWord.getId());
+                    }
+                }
+                // Si el filtro está activo, actualizar la lista tras el cambio
+                if (showOnlyNotLearned) {
+                    applyFilter();
+                }
+            });
+
+            // Configura el botón de eliminar si es necesario
+            deleteButton.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    removeWord(position);
+                    if (listener != null) {
+                        listener.onFilterResults(filteredList.size());
+                    }
                 }
             });
         }
     }
 
-    public List<WordInterface> getCustomWordList() {
-        return customWordList;
-    }
-
-    public void setCustomWordList(List<WordInterface> customWordList) {
-        this.customWordList = customWordList;
-    }
-        public interface OnCustomWordDeleteListener {
+    /**
+     * Interfaz para manejar la eliminación de palabras.
+     */
+    public interface OnCustomWordDeleteListener {
         void onDelete(String wordId, int position);
     }
+
 }
