@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
+import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.WordDTO;
 import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.data.repository.WordRepository;
@@ -28,7 +29,6 @@ public class WordService {
         return instance;
     }
 
-
     public LiveData<List<WordDTO>> getWordsByLimit(int limit) {
         LiveData<List<Word>> wordsByLimit = wordRepository.getWordsByLimit(limit);
 
@@ -44,4 +44,38 @@ public class WordService {
             return dtoList;
         });
     }
+
+
+    public LiveData<List<WordDTO>> getWordsNotLearned(String userId, ProgressType progressType, int limit){
+        LiveData<List<Word>> wordsByLimit = wordRepository.getWordsNotLearned(userId, progressType, limit);
+
+        return Transformations.map(wordsByLimit, words -> {
+            List<WordDTO> dtoList = new ArrayList<>();
+            for (Word word : words) {
+                WordDTO dto = new WordDTO(
+                        word.getId(),
+                        word.getWord(),
+                        word.getSpanish());
+                dtoList.add(dto);
+            }
+            return dtoList;
+        });
+    }
+
+    public LiveData<List<WordDTO>> getWordsLearned(String userId, ProgressType progressType, int limit){
+        LiveData<List<Word>> wordsByLimit = wordRepository.getWordsLearned(userId, progressType, limit);
+
+        return Transformations.map(wordsByLimit, words -> {
+            List<WordDTO> dtoList = new ArrayList<>();
+            for (Word word : words) {
+                WordDTO dto = new WordDTO(
+                        word.getId(),
+                        word.getWord(),
+                        word.getSpanish());
+                dtoList.add(dto);
+            }
+            return dtoList;
+        });
+    }
+
     }

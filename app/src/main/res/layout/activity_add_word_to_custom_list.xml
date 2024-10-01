@@ -29,11 +29,11 @@
             android:layout_marginBottom="16dp">
 
             <AutoCompleteTextView
-                android:id="@+id/autoCompleteCategory"
+                android:id="@+id/textViewAutoCompleteList"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Buscar o crear categoría"
+                android:hint="Buscar o crear lista"
                 android:inputType="text"
                 android:completionHint="Buscar categorías"/>
 

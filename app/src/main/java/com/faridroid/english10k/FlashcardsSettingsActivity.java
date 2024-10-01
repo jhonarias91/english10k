@@ -32,6 +32,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
     Button decrementButton;
     private Button btnGoHome;
     private Button btnGoLearnedWords;
+    private Button btnReviewLearnedWords;
 
     private FlashcardsSettingsViewModel flashcardsSettingsViewModel;
     private SeekBarRange seekBarRange;
@@ -56,6 +57,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
 
         btnStartGame = findViewById(R.id.start_flashcards_button);
         btnGoLearnedWords = findViewById(R.id.btnGoLearnedWords);
+        btnReviewLearnedWords = findViewById(R.id.btnReviewLearnedWords);
 
         wordCountSeekBar.setOnSeekBarChangeListener(this);
         incrementButton = findViewById(R.id.increment_button);
@@ -63,6 +65,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
 
         btnStartGame.setOnClickListener(this);
         btnGoLearnedWords.setOnClickListener(this);
+        btnReviewLearnedWords.setOnClickListener(this);
         incrementButton.setOnClickListener(this);
         decrementButton.setOnClickListener(this);
 
@@ -145,9 +148,21 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             Intent intent = new Intent(FlashcardsSettingsActivity.this, MainActivity.class);
             startActivity(intent);
         }else if (view.getId() == R.id.btnGoLearnedWords){
-            Intent intent = new Intent(FlashcardsSettingsActivity.this, LearnedWordsActivity.class);
+                    Intent intent = new Intent(FlashcardsSettingsActivity.this, LearnedWordsActivity.class);
             intent.putExtra("user", this.user);
             startActivity(intent);
+        }else if (view.getId() == R.id.btnReviewLearnedWords){
+            Intent intent = new Intent(FlashcardsSettingsActivity.this, FlashcardGameActivity.class);
+            intent.putExtra("maxWords", this.seekBarRange.getMax());
+            intent.putExtra("user", this.user);
+            int wordsToPlay = wordCountSeekBar.getProgress();
+            intent.putExtra("wordsToPlay", wordsToPlay);
+            intent.putExtra("origin", 1);
+            intent.putExtra("type",2 );//indicating that we are reviewing learned words
+            flashcardsSettingsViewModel.setRange(wordsToPlay);
+
+            startActivity(intent);
+
         }
     }
     private int getIncrementValueBasedOnMax(int value) {

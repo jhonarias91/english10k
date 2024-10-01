@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.faridroid.english10k.data.dto.ProgressType;
@@ -14,6 +15,7 @@ import com.faridroid.english10k.data.repository.WordRepository;
 import com.faridroid.english10k.service.UserProgressService;
 import com.faridroid.english10k.service.WordService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,19 @@ public class WordViewModel extends AndroidViewModel {
         wordService = WordService.getInstance(application);
     }
 
-    public LiveData<List<WordInterface>> getWordsByLimit(int limit, String userId) {
+    public LiveData<List<WordInterface>> getWordsByLimit(int limit, String userId, int type) {
+        if (type == 1) {
+            LiveData<List<WordDTO>> wordsNotLearned = wordService.getWordsNotLearned(userId, ProgressType.WORD_LEARNED, limit);
+            return Transformations.map(wordsNotLearned, words -> new ArrayList<>(words));
+        } else if (type == 2) {
+            LiveData<List<WordDTO>> wordsLearned = wordService.getWordsLearned(userId, ProgressType.WORD_LEARNED, limit);
+            return Transformations.map(wordsLearned, words -> new ArrayList<>(words));
+        } else {
+            return new MutableLiveData<>(new ArrayList<>());
+        }
+    }
+
+    public LiveData<List<WordInterface>> getLearnedWordsByLimit(int limit, String userId) {
         LiveData<List<WordDTO>> wordsByLimit = wordService.getWordsByLimit(limit);
         LiveData<List<UserProgressDTO>> allUserProgress = userProgressService.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
 

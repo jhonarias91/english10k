@@ -93,11 +93,8 @@ public class CustomWordAdapterOnPractice extends RecyclerView.Adapter<CustomWord
         listener.onFilterResults(filteredList.size());
     }
 
-    /**
-     * Método para actualizar la lista completa de palabras.
-     * @param customWordList Nueva lista de palabras.
-     */
-    public void setCustomWordList(List<WordInterface> customWordList) {
+
+    public void setWordList(List<WordInterface> customWordList) {
         this.fullWordList = new ArrayList<>(customWordList);
         applyFilter(); // Reaplica el filtro con la nueva lista
     }

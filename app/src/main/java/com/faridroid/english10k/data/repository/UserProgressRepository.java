@@ -8,9 +8,10 @@ import androidx.lifecycle.LiveData;
 import com.faridroid.english10k.data.dao.UserProgressDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
 import com.faridroid.english10k.data.database.Room10kDatabase;
-import com.faridroid.english10k.data.entity.UserProgress;
 import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.UserProgressWordJoinDTO;
+import com.faridroid.english10k.data.entity.UserProgress;
+import com.faridroid.english10k.data.entity.Word;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -79,4 +80,5 @@ public class UserProgressRepository {
             }
         });
     }
+
 }

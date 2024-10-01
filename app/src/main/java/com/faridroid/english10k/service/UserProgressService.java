@@ -5,11 +5,11 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
-import com.faridroid.english10k.data.entity.UserProgress;
-import com.faridroid.english10k.data.repository.UserProgressRepository;
 import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.UserProgressDTO;
 import com.faridroid.english10k.data.dto.UserProgressWordJoinDTO;
+import com.faridroid.english10k.data.entity.UserProgress;
+import com.faridroid.english10k.data.repository.UserProgressRepository;
 
 import java.util.ArrayList;
 import java.util.List;

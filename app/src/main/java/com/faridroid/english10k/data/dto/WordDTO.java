@@ -16,6 +16,7 @@ public class WordDTO implements WordInterface {
 
     private Long updated;
 
+    //This is no mapped on the db just to filter the words that are already learned
     private boolean learned;
 
 

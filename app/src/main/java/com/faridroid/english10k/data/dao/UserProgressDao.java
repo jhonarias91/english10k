@@ -50,4 +50,5 @@ public interface UserProgressDao {
 
     @Query("SELECT * FROM user_progress")
     List<UserProgress> getAllUserProgressDirect();
+
 }

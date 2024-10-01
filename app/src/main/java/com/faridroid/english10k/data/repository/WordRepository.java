@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import com.faridroid.english10k.data.dao.WordDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
 import com.faridroid.english10k.data.database.Room10kDatabase;
+import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.entity.Word;
 
 import java.util.List;
@@ -36,4 +37,11 @@ public class WordRepository {
         return wordDao.getTotalWords();
     }
 
+    public LiveData<List<Word>> getWordsNotLearned(String userId, ProgressType progressType, int limit){
+        return wordDao.getWordsNotLearned(userId, progressType, limit);
+    }
+
+    public LiveData<List<Word>> getWordsLearned(String userId, ProgressType progressType, int limit){
+        return wordDao.getWordsLearned(userId, progressType, limit);
+    }
 }

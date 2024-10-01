@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class AddWordToCustomListActivity extends AppCompatActivity implements CustomWordAdapter.OnCustomWordDeleteListener {
 
-    private AutoCompleteTextView autoCompleteCategory;
+    private AutoCompleteTextView textViewAutoCompleteList;
     private EditText editTextWord;
     private EditText editTextTranslation;
     private Button buttonAddPair;
@@ -62,7 +62,7 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
         customWordViewModel = new ViewModelProvider(this).get(CustomWordViewModel.class);
 
         // Enlaza los componentes de la interfaz
-        autoCompleteCategory = findViewById(R.id.autoCompleteCategory);
+        textViewAutoCompleteList = findViewById(R.id.textViewAutoCompleteList);
         editTextWord = findViewById(R.id.editTextWord);
         editTextTranslation = findViewById(R.id.editTextTranslation);
         buttonAddPair = findViewById(R.id.buttonPlayList);
@@ -83,7 +83,7 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
         });
 
         // Maneja el filtrado para el AutoCompleteTextView de categoría
-        autoCompleteCategory.addTextChangedListener(new TextWatcher() {
+        textViewAutoCompleteList.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -100,22 +100,22 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
             }
         });
 
-        autoCompleteCategory.setThreshold(1);
-        autoCompleteCategory.setOnFocusChangeListener((v, hasFocus) -> {
+        textViewAutoCompleteList.setThreshold(1);
+        textViewAutoCompleteList.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus && customListAdapter != null) {
                 customListAdapter.getFilter().filter("");
-                autoCompleteCategory.showDropDown();
+                textViewAutoCompleteList.showDropDown();
             }
         });
 
-        autoCompleteCategory.setThreshold(1);
+        textViewAutoCompleteList.setThreshold(1);
 
         // Maneja la selección de un ítem en el dropdown
-        autoCompleteCategory.setOnItemClickListener((parent, view, position, id) -> {
+        textViewAutoCompleteList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedItem = customListAdapter.getItem(position);
             if (selectedItem != null && selectedItem.startsWith("Crear ")) {
                 String newCustomListName = selectedItem.replace("Crear \"", "").replace("\"", "");
-                autoCompleteCategory.setText(newCustomListName);
+                textViewAutoCompleteList.setText(newCustomListName);
                 createNewList(newCustomListName); // Crea una nueva lista si se selecciona la opción de creación
                 Toast.makeText(this, newCustomListName + " creada", Toast.LENGTH_SHORT).show();
             } else {
@@ -147,6 +147,7 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
                                         public void onClick(DialogInterface dialog, int which) {
                                             // Llama al ViewModel para eliminar la lista
                                             customListModel.deleteCustomList(currentListId);
+                                            textViewAutoCompleteList.setText("");
                                             Toast.makeText(AddWordToCustomListActivity.this, "Lista eliminada", Toast.LENGTH_SHORT).show();
                                         }
                                     })
@@ -160,9 +161,9 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
         });
 
         //Try to fix show when click and empty
-        autoCompleteCategory.setOnClickListener(v -> {
-            if (!autoCompleteCategory.isPopupShowing() && customListAdapter != null) {
-                autoCompleteCategory.showDropDown();
+        textViewAutoCompleteList.setOnClickListener(v -> {
+            if (!textViewAutoCompleteList.isPopupShowing() && customListAdapter != null) {
+                textViewAutoCompleteList.showDropDown();
             }
         });
         setBtnCreateWord();
@@ -200,14 +201,14 @@ public class AddWordToCustomListActivity extends AppCompatActivity implements Cu
         List<String> names = customListDTOS.stream().map(customListDTO -> customListDTO.getName()).collect(Collectors.toList());
         if (customListAdapter == null) {
             customListAdapter = new CustomListAdapter(this, names, customListDTOS);
-            autoCompleteCategory.setAdapter(customListAdapter);
+            textViewAutoCompleteList.setAdapter(customListAdapter);
         } else {
             customListAdapter.setCategories(customListDTOS);
         }
 
-        autoCompleteCategory.post(() -> {
-            if (!autoCompleteCategory.isPopupShowing()) {
-                autoCompleteCategory.showDropDown();
+        textViewAutoCompleteList.post(() -> {
+            if (!textViewAutoCompleteList.isPopupShowing()) {
+                textViewAutoCompleteList.showDropDown();
             }
         });
     }

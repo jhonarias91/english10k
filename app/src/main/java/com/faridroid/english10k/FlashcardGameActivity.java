@@ -111,12 +111,15 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         });
 
         if (OriginEnum.ENGLISH10K.equals(originEnum)) {
+
+            int type = getIntent().getExtras().getInt("type", 1);
             this.maxWords = getIntent().getIntExtra("maxWords", 100);
             this.wordsToPlay = getIntent().getIntExtra("wordsToPlay", 5);
 
+            //todo: check to send maxWords
             wordViewModel = new ViewModelProvider(this,
                     ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
-            wordViewModel.getWordsByLimit(this.maxWords, this.user.getId()).observe(this, words -> {
+            wordViewModel.getWordsByLimit(this.wordsToPlay, this.user.getId(), type).observe(this, words -> {
                 //this.allPosibleWords = words;
                 if (gameManager == null) {
                     gameManager = new FlashcardGameManager(maxWords, wordsToPlay, words, textToSpeech, this.user, originEnum, getApplication());
@@ -335,8 +338,8 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 body = "Tu puntaje es: " + total;
                 break;
             case 2:
-                title = "¡Vocabulario completo! puntaje: "+ total;
-                body = "Desmarca las aprendidas para volver a jugar";
+                title = "¡Conjunto completo! puntaje: "+ total;
+                body = "Vuelve a seleccioón de palabras para volver a jugar";
                 break;
         }
         // create end game dialog
