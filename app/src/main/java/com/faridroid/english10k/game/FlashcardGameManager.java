@@ -159,6 +159,37 @@ public class FlashcardGameManager {
         }
     }
 
+//call this
+    public void removeLearnedWord(OriginEnum originEnum) {
+        WordInterface currentWord = getCurrentWord();
+        if (currentWord == null) {
+            Log.w("FlashcardGameManager", "No current word to add as learned.");
+            return;
+        }
+        deleteUserProgress(originEnum, currentWord);
+        // Asegurarse de que la lista es mutable
+        if (allPossibleWords instanceof ArrayList) {
+            ((ArrayList<WordInterface>) allPossibleWords).remove(currentWord);
+        } else {
+            // Si no es mutable, crear una nueva lista mutable
+            allPossibleWords = new ArrayList<>(allPossibleWords);
+            allPossibleWords.remove(currentWord);
+        }
+        // Ajustar la posición actual si es necesario
+        if (currentCardPosition >= allPossibleWords.size()) {
+            currentCardPosition = allPossibleWords.size() - 1;
+        }
+    }
+
+    private void deleteUserProgress(OriginEnum originEnum, WordInterface currentWord) {
+        long lastUpdated = System.currentTimeMillis();
+        if (OriginEnum.CUSTOM_WORDS.equals(originEnum)) {
+            userCustomProgressService.deleteUserCustomProgressByWordIdAndProgressType(currentWord.getId(), ProgressType.WORD_LEARNED);
+        } else if (OriginEnum.ENGLISH10K.equals(originEnum)) {
+            userProgressService.deleteUserProgressByWordIdAndProgressType(currentWord.getId(), ProgressType.WORD_LEARNED);
+        }
+    }
+
     public UserDTO getUser() {
         return user;
     }

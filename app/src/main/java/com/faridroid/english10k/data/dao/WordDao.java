@@ -32,7 +32,6 @@ public interface WordDao {
     @Query("SELECT COUNT(*) FROM words")
     LiveData<Integer> getTotalWords();
 
-
     @Query("SELECT * FROM words w WHERE NOT EXISTS (" +
             "SELECT 1 FROM user_progress up WHERE up.user_id = :userId " +
             "AND up.word_id = w.id AND up.progress_type = :progressType) " +

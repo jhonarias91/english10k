@@ -8,16 +8,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.faridroid.english10k.data.dto.ProgressType;
-import com.faridroid.english10k.data.dto.UserProgressDTO;
 import com.faridroid.english10k.data.dto.WordDTO;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
+import com.faridroid.english10k.data.enums.WordsGameTypeEnum;
 import com.faridroid.english10k.data.repository.WordRepository;
 import com.faridroid.english10k.service.UserProgressService;
 import com.faridroid.english10k.service.WordService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WordViewModel extends AndroidViewModel {
 
@@ -33,31 +32,16 @@ public class WordViewModel extends AndroidViewModel {
         wordService = WordService.getInstance(application);
     }
 
-    public LiveData<List<WordInterface>> getWordsByLimit(int limit, String userId, int type) {
-        if (type == 1) {
+    public LiveData<List<WordInterface>> getWordsByLimit(int limit, String userId, WordsGameTypeEnum type) {
+        if (type.equals(WordsGameTypeEnum.TO_LEARN)) {
             LiveData<List<WordDTO>> wordsNotLearned = wordService.getWordsNotLearned(userId, ProgressType.WORD_LEARNED, limit);
             return Transformations.map(wordsNotLearned, words -> new ArrayList<>(words));
-        } else if (type == 2) {
+        } else if (type.equals(WordsGameTypeEnum.LEARNED)) {
             LiveData<List<WordDTO>> wordsLearned = wordService.getWordsLearned(userId, ProgressType.WORD_LEARNED, limit);
             return Transformations.map(wordsLearned, words -> new ArrayList<>(words));
         } else {
             return new MutableLiveData<>(new ArrayList<>());
         }
-    }
-
-    public LiveData<List<WordInterface>> getLearnedWordsByLimit(int limit, String userId) {
-        LiveData<List<WordDTO>> wordsByLimit = wordService.getWordsByLimit(limit);
-        LiveData<List<UserProgressDTO>> allUserProgress = userProgressService.getAllUserProgressByType(userId, ProgressType.WORD_LEARNED);
-
-        //if the word on wordsByLimit is already learned, remove it from the list
-
-        return Transformations.switchMap(allUserProgress, userProgressList ->
-                Transformations.map(wordsByLimit, words ->
-                        words.stream()
-                                .filter(word -> userProgressList.stream().noneMatch(progress -> String.valueOf(progress.getWordId()).equalsIgnoreCase(word.getId())))
-                                .collect(Collectors.toList())
-                )
-        );
     }
 
     //todo: here check if needed to exclude the one already learned

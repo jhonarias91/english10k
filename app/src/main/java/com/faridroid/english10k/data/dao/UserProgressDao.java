@@ -51,4 +51,6 @@ public interface UserProgressDao {
     @Query("SELECT * FROM user_progress")
     List<UserProgress> getAllUserProgressDirect();
 
+    @Query("DELETE FROM user_progress WHERE word_id = :wordId AND progress_type = :progressType")
+    void deleteUserProgressByWordIdAndProgressType(String wordId, ProgressType progressType);
 }

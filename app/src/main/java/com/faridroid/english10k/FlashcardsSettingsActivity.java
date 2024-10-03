@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.faridroid.english10k.data.enums.WordsGameTypeEnum;
 import com.faridroid.english10k.view.viewmodel.FlashcardsSettingsViewModel;
 import com.faridroid.english10k.view.viewmodel.SeekBarRange;
 import com.faridroid.english10k.view.viewmodel.WordViewModel;
@@ -140,6 +141,7 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
             intent.putExtra("origin", 1);
+            intent.putExtra("type",WordsGameTypeEnum.TO_LEARN.getValue() );//indicating that we are reviewing learned words
             flashcardsSettingsViewModel.setRange(wordsToPlay);
 
             startActivity(intent);
@@ -158,7 +160,8 @@ public class FlashcardsSettingsActivity extends AppCompatActivity implements Vie
             int wordsToPlay = wordCountSeekBar.getProgress();
             intent.putExtra("wordsToPlay", wordsToPlay);
             intent.putExtra("origin", 1);
-            intent.putExtra("type",2 );//indicating that we are reviewing learned words
+            intent.putExtra("type",WordsGameTypeEnum.LEARNED.getValue() );//indicating that we are reviewing learned words
+
             flashcardsSettingsViewModel.setRange(wordsToPlay);
 
             startActivity(intent);

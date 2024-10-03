@@ -8,7 +8,9 @@ import androidx.lifecycle.Transformations;
 import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.UserCustomProgressDTO;
 import com.faridroid.english10k.data.dto.UserCustomProgressWordJoinDTO;
+import com.faridroid.english10k.data.entity.CustomWord;
 import com.faridroid.english10k.data.entity.UserCustomProgress;
+import com.faridroid.english10k.data.entity.Word;
 import com.faridroid.english10k.data.repository.UserCustomProgressRepository;
 
 import java.util.ArrayList;
@@ -70,4 +72,5 @@ public class UserCustomProgressService {
     public void deleteUserCustomProgressByWordIdAndProgressType(String wordId, ProgressType progressType) {
         userCustomProgressRepository.deleteUserCustomProgressByWordIdAndProgressType(wordId, progressType);
     }
+
 }

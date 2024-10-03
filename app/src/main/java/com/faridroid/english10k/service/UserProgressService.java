@@ -70,4 +70,7 @@ public class UserProgressService {
         return  userProgressRepository.listUserProgressWithWord(userId,progressType);
     }
 
+    public void deleteUserProgressByWordIdAndProgressType(String wordId, ProgressType progressType) {
+        userProgressRepository.deleteUserProgressByWordIdAndProgressType(wordId, progressType);
+    }
 }

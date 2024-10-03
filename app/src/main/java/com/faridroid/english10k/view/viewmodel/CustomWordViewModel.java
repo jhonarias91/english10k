@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.faridroid.english10k.data.dto.CustomWordDTO;
@@ -11,9 +12,11 @@ import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.UserCustomProgressWordJoinDTO;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.data.entity.CustomWord;
+import com.faridroid.english10k.data.enums.WordsGameTypeEnum;
 import com.faridroid.english10k.service.CustomWordService;
 import com.faridroid.english10k.service.UserCustomProgressService;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +84,7 @@ public class CustomWordViewModel extends AndroidViewModel {
         return new CustomWordDTO(entity.getId(), entity.getListId(), entity.getWord(), entity.getSpanish());
     }
 
-    public LiveData<List<WordInterface>> getNonLearnedCustomWordsByList(String userId, String listId) {
+    public LiveData<List<WordInterface>> getNonLearnedCustomWordsByList(String userId, String listId, WordsGameTypeEnum wordsGameTypeEnum) {
 
         LiveData<List<WordInterface>> customWordsByList = customWordService.getCustomWordsByList(listId);
         LiveData<List<UserCustomProgressWordJoinDTO>> learnedWordsLiveData = userCustomProgressService.listCustomUserProgressWithWordByListId(listId, ProgressType.WORD_LEARNED);
@@ -95,6 +98,18 @@ public class CustomWordViewModel extends AndroidViewModel {
                                 .collect(Collectors.toList())
                 )
         );
+    }
+
+    public LiveData<List<WordInterface>> getCustomWordsByListId(String listId, WordsGameTypeEnum type) {
+        if (type.equals(WordsGameTypeEnum.TO_LEARN)) {
+            LiveData<List<WordInterface>> wordsNotLearned = customWordService.getWordsNotLearned(listId, ProgressType.WORD_LEARNED);
+            return Transformations.map(wordsNotLearned, words -> new ArrayList<>(words));
+        } else if (type.equals(WordsGameTypeEnum.LEARNED)) {
+            LiveData<List<WordInterface>> wordsLearned = customWordService.getWordsLearned(listId, ProgressType.WORD_LEARNED);
+            return Transformations.map(wordsLearned, words -> new ArrayList<>(words));
+        } else {
+            return new MutableLiveData<>(new ArrayList<>());
+        }
     }
 
     public void deleteCustomList(String currentListId) {

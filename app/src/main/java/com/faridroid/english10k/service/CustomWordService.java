@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
 import com.faridroid.english10k.data.dto.CustomWordDTO;
+import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.data.entity.CustomWord;
 import com.faridroid.english10k.data.repository.CustomWordRepository;
@@ -32,6 +33,40 @@ public class CustomWordService {
     public LiveData<List<WordInterface>> getCustomWordsByList(String listId) {
         LiveData<List<CustomWord>> customWordsByList = customWordRepository.getCustomWordsByList(listId);
 
+        return Transformations.map(customWordsByList, customWords -> {
+            List<WordInterface> dtoList = new ArrayList<>();
+            for (CustomWord customWord : customWords) {
+                WordInterface dto = new CustomWordDTO(
+                        customWord.getId(),
+                        customWord.getListId(),
+                        customWord.getWord(),
+                        customWord.getSpanish()
+                );
+                dtoList.add(dto);
+            }
+            return dtoList;
+        });
+    }
+
+    public LiveData<List<WordInterface>> getWordsNotLearned(String listId, ProgressType progressType){
+        LiveData<List<CustomWord>> customWordsByList = customWordRepository.getWordsNotLearned(listId, progressType);
+        return Transformations.map(customWordsByList, customWords -> {
+            List<WordInterface> dtoList = new ArrayList<>();
+            for (CustomWord customWord : customWords) {
+                WordInterface dto = new CustomWordDTO(
+                        customWord.getId(),
+                        customWord.getListId(),
+                        customWord.getWord(),
+                        customWord.getSpanish()
+                );
+                dtoList.add(dto);
+            }
+            return dtoList;
+        });
+    }
+
+    public LiveData<List<WordInterface>> getWordsLearned(String listId, ProgressType progressType){
+        LiveData<List<CustomWord>> customWordsByList = customWordRepository.getWordsLearned(listId, progressType);
         return Transformations.map(customWordsByList, customWords -> {
             List<WordInterface> dtoList = new ArrayList<>();
             for (CustomWord customWord : customWords) {
@@ -74,4 +109,6 @@ public class CustomWordService {
     public void deleteCustomList(String currentListId) {
         customWordRepository.deleteCustomList(currentListId);
     }
+
+
 }

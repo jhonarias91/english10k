@@ -11,7 +11,6 @@ import com.faridroid.english10k.data.database.Room10kDatabase;
 import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.dto.UserProgressWordJoinDTO;
 import com.faridroid.english10k.data.entity.UserProgress;
-import com.faridroid.english10k.data.entity.Word;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -81,4 +80,15 @@ public class UserProgressRepository {
         });
     }
 
+    public void deleteUserProgressByWordIdAndProgressType(String wordId, ProgressType progressType) {
+        CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+        executorService.execute(() -> {
+            try {
+                dao.deleteUserProgressByWordIdAndProgressType(wordId, progressType);
+                completableFuture.complete(null); // Complete normally
+            } catch (Exception e) {
+                completableFuture.completeExceptionally(e); // Complete with error
+            }
+        });
+    }
 }

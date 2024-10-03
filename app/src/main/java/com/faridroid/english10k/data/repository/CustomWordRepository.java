@@ -7,7 +7,9 @@ import androidx.lifecycle.LiveData;
 import com.faridroid.english10k.data.dao.CustomWordDao;
 import com.faridroid.english10k.data.database.DatabaseClient;
 import com.faridroid.english10k.data.database.Room10kDatabase;
+import com.faridroid.english10k.data.dto.ProgressType;
 import com.faridroid.english10k.data.entity.CustomWord;
+import com.faridroid.english10k.data.entity.Word;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -50,5 +52,13 @@ public class CustomWordRepository {
 
     public void deleteCustomList(String currentListId) {
         executorService.execute(() -> dao.deleteCustomList(currentListId));
+    }
+
+    public LiveData<List<CustomWord>> getWordsNotLearned(String listId, ProgressType progressType){
+        return dao.getWordsNotLearned(listId, progressType);
+    }
+
+    public LiveData<List<CustomWord>> getWordsLearned(String listId, ProgressType progressType){
+        return dao.getWordsLearned(listId, progressType);
     }
 }

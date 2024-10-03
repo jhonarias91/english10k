@@ -23,6 +23,7 @@ import com.faridroid.english10k.data.dto.CategoryDTO;
 import com.faridroid.english10k.data.dto.CustomListDTO;
 import com.faridroid.english10k.data.dto.UserDTO;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
+import com.faridroid.english10k.data.enums.WordsGameTypeEnum;
 import com.faridroid.english10k.view.adapter.CustomListPracticeAdapter;
 import com.faridroid.english10k.view.adapter.CustomWordAdapterOnPractice;
 import com.faridroid.english10k.view.adapter.OnLearnedWordClickListener;
@@ -41,7 +42,8 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
     private Spinner categorySpinnerPractice;
 
     private AutoCompleteTextView autoCompleteCategory;
-    private Button buttonPlayList;
+    private Button buttonPlayListPractice;
+    private Button btnReviewCustomLearnedWords;
     private RecyclerView recyclerViewWordPairs;
     private CustomWordAdapterOnPractice customWordAdapter;
     private List<WordInterface> customWordList = new ArrayList<>();
@@ -84,7 +86,8 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
      */
     private void bindViews() {
         autoCompleteCategory = findViewById(R.id.autoCompleteCustomListPractice);
-        buttonPlayList = findViewById(R.id.buttonPlayListPractice);
+        buttonPlayListPractice = findViewById(R.id.buttonPlayListPractice);
+        btnReviewCustomLearnedWords = findViewById(R.id.btnReviewCustomLearnedWords);
         recyclerViewWordPairs = findViewById(R.id.recyclerViewWordPairsPractice);
         categorySpinnerPractice = findViewById(R.id.categorySpinnerPractice);
         switchCompatLearned = findViewById(R.id.switchCompatLearned);
@@ -169,7 +172,7 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
      * Configura el botón para iniciar la práctica con la lista seleccionada.
      */
     private void setupButtonPlayList() {
-        buttonPlayList.setOnClickListener(v -> {
+        buttonPlayListPractice.setOnClickListener(v -> {
             if (currentListId == null) {
                 Toast.makeText(this, "Seleccione una lista para practicar", Toast.LENGTH_SHORT).show();
                 return;
@@ -178,6 +181,21 @@ public class PracticeMyListActivity extends AppCompatActivity implements OnLearn
             intent.putExtra("customListId", currentListId);
             intent.putExtra("user", this.user);
             intent.putExtra("origin", 2);
+            intent.putExtra("type", WordsGameTypeEnum.TO_LEARN.getValue());
+            startActivity(intent);
+        });
+
+        btnReviewCustomLearnedWords.setOnClickListener(v -> {
+            if (currentListId == null) {
+                Toast.makeText(this, "Seleccione una lista para repazar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(this, FlashcardGameActivity.class);
+            intent.putExtra("customListId", currentListId);
+            intent.putExtra("user", this.user);
+            intent.putExtra("origin", 2);
+            //type 2 means review learned words
+            intent.putExtra("type", WordsGameTypeEnum.LEARNED.getValue());
             startActivity(intent);
         });
     }

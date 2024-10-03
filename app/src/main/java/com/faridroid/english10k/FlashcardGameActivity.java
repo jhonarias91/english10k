@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.faridroid.english10k.data.dto.UserDTO;
 import com.faridroid.english10k.data.dto.interfaces.WordInterface;
 import com.faridroid.english10k.data.enums.OriginEnum;
+import com.faridroid.english10k.data.enums.WordsGameTypeEnum;
 import com.faridroid.english10k.game.FlashcardGameManager;
 import com.faridroid.english10k.utils.SwipeGestureListener;
 import com.faridroid.english10k.view.viewmodel.CustomWordViewModel;
@@ -68,6 +69,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
     private SwipeGestureListener swipeGestureListener;
     private OriginEnum originEnum;
+    private WordsGameTypeEnum wordsGameTypeEnum;
 
 
     private ImageButton imgBtnFlashSpeaker;
@@ -95,10 +97,8 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
         rightArrowFlashcard.setOnClickListener(this);
         viewToAnimateOnSwipe = findViewById(R.id.flashcardContainer);
 
-
         userViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserViewModel.class);
-
 
         LinearLayout learnedBox = findViewById(R.id.learnedBox);
         learnedBox.setOnClickListener(this);
@@ -109,18 +109,27 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
                 textToSpeech.setLanguage(Locale.US);
             }
         });
+        //This type indicate 1 for not learned words and 2 for learned words
+        int type = getIntent().getExtras().getInt("type", 1);
+        this.wordsGameTypeEnum = WordsGameTypeEnum.getByValue(type);
+        TextView toLearnTextView = findViewById(R.id.toLearnTextView);
+        if (wordsGameTypeEnum != null){
+            if (wordsGameTypeEnum == WordsGameTypeEnum.LEARNED){
+                toLearnTextView.setText("Repasar");
+            }else if (wordsGameTypeEnum == WordsGameTypeEnum.TO_LEARN){
+                toLearnTextView.setText("Aprendida");
+            }
+        }
 
         if (OriginEnum.ENGLISH10K.equals(originEnum)) {
 
-            int type = getIntent().getExtras().getInt("type", 1);
             this.maxWords = getIntent().getIntExtra("maxWords", 100);
             this.wordsToPlay = getIntent().getIntExtra("wordsToPlay", 5);
 
             //todo: check to send maxWords
             wordViewModel = new ViewModelProvider(this,
                     ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(WordViewModel.class);
-            wordViewModel.getWordsByLimit(this.wordsToPlay, this.user.getId(), type).observe(this, words -> {
-                //this.allPosibleWords = words;
+            wordViewModel.getWordsByLimit(this.wordsToPlay, this.user.getId(), wordsGameTypeEnum).observe(this, words -> {
                 if (gameManager == null) {
                     gameManager = new FlashcardGameManager(maxWords, wordsToPlay, words, textToSpeech, this.user, originEnum, getApplication());
                 }
@@ -133,7 +142,7 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
 
             customListId = getIntent().getStringExtra("customListId");
 
-            customWordViewModel.getNonLearnedCustomWordsByList(this.user.getId(), customListId).observe(this, words -> {
+            customWordViewModel.getCustomWordsByListId(customListId, wordsGameTypeEnum).observe(this, words -> {
                 if (gameManager == null) {
                     gameManager = new FlashcardGameManager(words.size(), words.size(), words, textToSpeech, this.user,originEnum, getApplication());
                 }
@@ -270,8 +279,13 @@ public class FlashcardGameActivity extends AppCompatActivity implements View.OnC
             gameManager.speakCurrentWord();
         } else if (id == R.id.learnedBox) {
             //Add learned word
-            gameManager.addLearnedWord(this.originEnum);
-            this.scoreLearnedWord++;
+            if (this.wordsGameTypeEnum == WordsGameTypeEnum.TO_LEARN) {
+                gameManager.addLearnedWord(this.originEnum);
+                this.scoreLearnedWord++;
+            }else if (this.wordsGameTypeEnum == WordsGameTypeEnum.LEARNED){
+                gameManager.removeLearnedWord(this.originEnum);
+                this.scoreLearnedWord++;
+            }
 
             // Comprueba si hay más palabras para jugar
             if (gameManager.hasNextWord()) {
