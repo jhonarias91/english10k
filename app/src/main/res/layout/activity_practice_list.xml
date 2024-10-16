@@ -68,7 +68,7 @@
             android:backgroundTint="@color/green_background"
             android:elevation="4dp"
             android:padding="4dp"
-            android:text="Repazar"
+            android:text="Repasar"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
